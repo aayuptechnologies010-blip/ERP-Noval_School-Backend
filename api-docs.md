@@ -2929,3 +2929,68 @@ Fetch the logs of dispatched credentials.
 curl -X GET http://localhost:5000/api/credentials/logs \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
+
+---
+
+# Teacher Observation API (`/api/teacher-observations`)
+
+## 1. Create Teacher Observation
+Record an observation for a staff member.
+
+```bash
+curl -X POST http://localhost:5000/api/teacher-observations \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "staff": "669f123456789abcdef01234",
+    "observationDate": "2026-08-20",
+    "subject": "Mathematics",
+    "topic": "Algebra",
+    "remarks": "Excellent class control and interaction.",
+    "rating": 5
+  }'
+```
+
+## 2. Get All Observations
+Fetch all teacher observations.
+
+```bash
+curl -X GET http://localhost:5000/api/teacher-observations \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+## 3. Get Observations by Staff ID
+Fetch observations specific to one staff member.
+
+```bash
+curl -X GET http://localhost:5000/api/teacher-observations/staff/669f123456789abcdef01234 \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+## 4. Get Observation by ID
+Fetch a single observation record.
+
+```bash
+curl -X GET http://localhost:5000/api/teacher-observations/669f123456789abcdef01234 \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+## 5. Update Observation
+Update an existing observation.
+
+```bash
+curl -X PUT http://localhost:5000/api/teacher-observations/669f123456789abcdef01234 \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "remarks": "Updated remarks."
+  }'
+```
+
+## 6. Delete Observation
+Delete an observation log.
+
+```bash
+curl -X DELETE http://localhost:5000/api/teacher-observations/669f123456789abcdef01234 \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```

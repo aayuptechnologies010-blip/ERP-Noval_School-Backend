@@ -52,6 +52,7 @@ app.use('/api/circulars', require('./routes/circularRoutes'));
 app.use('/api/sms', require('./routes/smsRoutes'));
 app.use('/api/specified-sms', require('./routes/specifiedSmsRoutes'));
 app.use('/api/credentials', require('./routes/credentialsRoutes'));
+app.use('/api/teacher-observations', require('./routes/teacherObservationRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

@@ -28,6 +28,8 @@ function getDummyBody(routePath, method) {
     rawBody = "{\n  \"sendVia\": \"SMS\",\n  \"sendToType\": \"Student\",\n  \"recipients\": [\"ID_HERE\"]\n}";
   } else if (routePath.includes('circulars') || routePath.includes('notices')) {
     rawBody = "{\n  \"title\": \"Sample Title\",\n  \"description\": \"Sample description\",\n  \"sendTo\": \"All User\"\n}";
+  } else if (routePath.includes('teacher-observations')) {
+    rawBody = "{\n  \"staff\": \"STAFF_ID_HERE\",\n  \"observationDate\": \"2026-08-20\",\n  \"subject\": \"Maths\",\n  \"topic\": \"Algebra\",\n  \"remarks\": \"Excellent class\",\n  \"rating\": 5\n}";
   } else if (routePath.includes('students')) {
     rawBody = "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"admissionNo\": \"AD123\"\n}";
   }

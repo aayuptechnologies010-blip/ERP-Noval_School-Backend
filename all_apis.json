@@ -560,5 +560,31 @@
       "method": "GET",
       "path": "/api/credentials/logs"
     }
+  ],
+  "/api/teacher-observations": [
+    {
+      "method": "POST",
+      "path": "/api/teacher-observations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/teacher-observations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/teacher-observations/staff/:staffId"
+    },
+    {
+      "method": "GET",
+      "path": "/api/teacher-observations/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/teacher-observations/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/teacher-observations/:id"
+    }
   ]
 }
