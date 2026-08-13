@@ -193,7 +193,10 @@ const studentSchema = new mongoose.Schema({
       address: { type: String },
       relation: { type: String }
     }
-  ]
+  ],
+
+  // Custom Status
+  isFavorite: { type: Boolean, default: false }
 
 }, {
   timestamps: true

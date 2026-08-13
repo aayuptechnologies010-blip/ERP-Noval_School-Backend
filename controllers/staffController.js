@@ -159,11 +159,79 @@ const toggleStaffStatus = async (req, res) => {
   }
 };
 
+// @desc    Get all favorite staff members
+// @route   GET /api/staffs/favorites
+// @access  Private (Admin)
+const getFavoriteStaff = async (req, res) => {
+  try {
+    const staffMembers = await Staff.find({ isFavorite: true }).populate('role', 'roleName description');
+    res.json(staffMembers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Toggle a staff member's favorite status
+// @route   PATCH /api/staffs/:id/favorite
+// @access  Private (Admin)
+const toggleStaffFavorite = async (req, res) => {
+  try {
+    const staff = await Staff.findById(req.params.id);
+
+    if (staff) {
+      staff.isFavorite = !staff.isFavorite;
+      const updatedStaff = await staff.save();
+      res.json({ message: `Staff member marked as ${updatedStaff.isFavorite ? 'Favorite' : 'Not Favorite'}`, isFavorite: updatedStaff.isFavorite });
+    } else {
+      res.status(404).json({ message: 'Staff member not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Bulk assign class teachers
+// @route   PUT /api/staffs/bulk/assign-class-teacher
+// @access  Private (Admin)
+const bulkAssignClassTeacher = async (req, res) => {
+  try {
+    const { updates } = req.body; // Expecting [{ staffId: '...', assignedClass: '...', assignedSection: '...' }]
+
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ message: 'Invalid data format. Expected an array of updates in "updates" field.' });
+    }
+
+    const bulkOps = updates.map((update) => ({
+      updateOne: {
+        filter: { _id: update.staffId },
+        update: { 
+          $set: { 
+            assignedClass: update.assignedClass,
+            assignedSection: update.assignedSection
+          } 
+        }
+      }
+    }));
+
+    if (bulkOps.length > 0) {
+      const result = await Staff.bulkWrite(bulkOps);
+      res.json({ message: 'Class teachers assigned successfully', result });
+    } else {
+      res.json({ message: 'No updates provided' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createStaff,
   getAllStaff,
   getStaffById,
   updateStaff,
   deleteStaff,
-  toggleStaffStatus
+  toggleStaffStatus,
+  getFavoriteStaff,
+  toggleStaffFavorite,
+  bulkAssignClassTeacher
 };

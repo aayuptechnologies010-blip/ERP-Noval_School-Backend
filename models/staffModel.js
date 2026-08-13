@@ -49,7 +49,13 @@ const staffSchema = new mongoose.Schema({
   nationality: { type: String, default: 'Indian' },
   
   // Status
-  isActive: { type: Boolean, default: true }
+  isActive: { type: Boolean, default: true },
+  // Class Teacher Assignment
+  assignedClass: { type: String, default: null },
+  assignedSection: { type: String, default: null },
+  
+  // Custom Status
+  isFavorite: { type: Boolean, default: false }
   
 }, {
   timestamps: true

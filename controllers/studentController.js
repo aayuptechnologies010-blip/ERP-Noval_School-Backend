@@ -79,12 +79,22 @@ const createStudent = async (req, res) => {
   }
 };
 
-// @desc    Get all students
+// @desc    Get all students (with optional filters)
 // @route   GET /api/students
 // @access  Private (Admin)
 const getAllStudents = async (req, res) => {
   try {
-    const students = await Student.find({});
+    const { class: studentClass, section } = req.query;
+    let query = {};
+    
+    if (studentClass) {
+      query['academicDetails.class'] = studentClass;
+    }
+    if (section) {
+      query['academicDetails.section'] = section;
+    }
+
+    const students = await Student.find(query).sort({ 'academicDetails.rollNumber': 1 });
     res.json(students);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -173,10 +183,174 @@ const deleteStudent = async (req, res) => {
   }
 };
 
+// @desc    Get all favorite students
+// @route   GET /api/students/favorites
+// @access  Private (Admin)
+const getFavoriteStudents = async (req, res) => {
+  try {
+    const students = await Student.find({ isFavorite: true });
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Toggle a student's favorite status
+// @route   PATCH /api/students/:id/favorite
+// @access  Private (Admin)
+const toggleStudentFavorite = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id);
+
+    if (student) {
+      student.isFavorite = !student.isFavorite;
+      const updatedStudent = await student.save();
+      res.json({ message: `Student marked as ${updatedStudent.isFavorite ? 'Favorite' : 'Not Favorite'}`, isFavorite: updatedStudent.isFavorite });
+    } else {
+      res.status(404).json({ message: 'Student not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Bulk update student roll numbers
+// @route   PUT /api/students/bulk/roll-numbers
+// @access  Private (Admin)
+const bulkUpdateRollNumbers = async (req, res) => {
+  try {
+    const { updates } = req.body; // Expecting [{ studentId: '...', rollNumber: '...' }]
+
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ message: 'Invalid data format. Expected an array of updates in "updates" field.' });
+    }
+
+    const bulkOps = updates.map((update) => ({
+      updateOne: {
+        filter: { _id: update.studentId },
+        update: { $set: { 'academicDetails.rollNumber': update.rollNumber } }
+      }
+    }));
+
+    if (bulkOps.length > 0) {
+      const result = await Student.bulkWrite(bulkOps);
+      res.json({ message: 'Roll numbers updated successfully', result });
+    } else {
+      res.json({ message: 'No updates provided' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Bulk update student house names
+// @route   PUT /api/students/bulk/house-names
+// @access  Private (Admin)
+const bulkUpdateHouseNames = async (req, res) => {
+  try {
+    const { updates } = req.body; // Expecting [{ studentId: '...', houseName: '...' }]
+
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ message: 'Invalid data format. Expected an array of updates in "updates" field.' });
+    }
+
+    const bulkOps = updates.map((update) => ({
+      updateOne: {
+        filter: { _id: update.studentId },
+        update: { $set: { 'personalDetails.houseNames': update.houseName } }
+      }
+    }));
+
+    if (bulkOps.length > 0) {
+      const result = await Student.bulkWrite(bulkOps);
+      res.json({ message: 'House allocations updated successfully', result });
+    } else {
+      res.json({ message: 'No updates provided' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Bulk update student photos
+// @route   PUT /api/students/bulk/photos
+// @access  Private (Admin)
+const bulkUpdatePhotos = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: 'No photos provided for update' });
+    }
+
+    const bulkOps = [];
+    
+    req.files.forEach(file => {
+      let studentId = file.fieldname;
+      if (studentId.startsWith('photo_')) {
+        studentId = studentId.replace('photo_', '');
+      }
+      
+      const photoUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
+      
+      if (studentId && studentId.length === 24) { // Basic check for mongoose ID
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: studentId },
+            update: { $set: { 'personalDetails.studentPhoto': photoUrl } }
+          }
+        });
+      }
+    });
+
+    if (bulkOps.length > 0) {
+      const result = await Student.bulkWrite(bulkOps);
+      res.json({ message: 'Photos updated successfully', result });
+    } else {
+      res.status(400).json({ message: 'No valid student IDs found in file fields. Ensure field names match student IDs.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Bulk update student clubs
+// @route   PUT /api/students/bulk/clubs
+// @access  Private (Admin)
+const bulkUpdateClubs = async (req, res) => {
+  try {
+    const { updates } = req.body; // Expecting [{ studentId: '...', club: '...' }]
+
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ message: 'Invalid data format. Expected an array of updates in "updates" field.' });
+    }
+
+    const bulkOps = updates.map((update) => ({
+      updateOne: {
+        filter: { _id: update.studentId },
+        update: { $set: { 'personalDetails.clubs': update.club } }
+      }
+    }));
+
+    if (bulkOps.length > 0) {
+      const result = await Student.bulkWrite(bulkOps);
+      res.json({ message: 'Clubs updated successfully', result });
+    } else {
+      res.json({ message: 'No updates provided' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createStudent,
   getAllStudents,
   getStudentById,
   updateStudent,
-  deleteStudent
+  deleteStudent,
+  getFavoriteStudents,
+  toggleStudentFavorite,
+  bulkUpdateRollNumbers,
+  bulkUpdateHouseNames,
+  bulkUpdatePhotos,
+  bulkUpdateClubs
 };

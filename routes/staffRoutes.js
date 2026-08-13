@@ -6,7 +6,10 @@ const {
   getStaffById,
   updateStaff,
   deleteStaff,
-  toggleStaffStatus
+  toggleStaffStatus,
+  getFavoriteStaff,
+  toggleStaffFavorite,
+  bulkAssignClassTeacher
 } = require('../controllers/staffController');
 const { protect } = require('../middlewares/authMiddleware');
 const { uploadSingle } = require('../middlewares/uploadMiddleware');
@@ -18,6 +21,12 @@ router.route('/')
   .post(uploadSingle.single('staffPhoto'), createStaff)
   .get(getAllStaff);
 
+// Bulk assign class teacher (must be before /:id)
+router.put('/bulk/assign-class-teacher', bulkAssignClassTeacher);
+
+// Get favorite staff (must be before /:id)
+router.get('/favorites', getFavoriteStaff);
+
 router.route('/:id')
   .get(getStaffById)
   .put(uploadSingle.single('staffPhoto'), updateStaff)
@@ -25,5 +34,8 @@ router.route('/:id')
 
 router.route('/:id/status')
   .patch(toggleStaffStatus);
+
+router.route('/:id/favorite')
+  .patch(toggleStaffFavorite);
 
 module.exports = router;

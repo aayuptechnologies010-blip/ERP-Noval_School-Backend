@@ -22,16 +22,14 @@ const storage = multer.diskStorage({
 // Check File Type
 function checkFileType(file, cb) {
   // Allowed ext
-  const filetypes = /jpeg|jpg|png|gif|webp/;
+  const filetypes = /jpeg|jpg|png|gif|webp|pdf|doc|docx|xls|xlsx|txt|csv/;
   // Check ext
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  // Check mime
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (mimetype && extname) {
+  
+  if (extname) {
     return cb(null, true);
   } else {
-    cb(new Error('Error: Images Only!'));
+    cb(new Error('Error: Invalid file type! Allowed types are images, pdf, doc, xls, txt, csv.'));
   }
 }
 
@@ -58,4 +56,21 @@ const uploadMultiple = multer({
   { name: 'familyPhoto', maxCount: 1 }
 ]);
 
-module.exports = { uploadSingle, uploadMultiple };
+// Init any upload for bulk operations (like bulk photo update)
+const uploadAny = multer({
+  storage,
+  limits: { fileSize: 5000000 }, // 5MB limit per file
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  }
+}).any();
+
+const uploadDocument = multer({
+  storage,
+  limits: { fileSize: 10000000 }, // 10MB limit
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  }
+});
+
+module.exports = { uploadSingle, uploadMultiple, uploadAny, uploadDocument };

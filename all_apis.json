@@ -1,0 +1,564 @@
+{
+  "/api/admin": [
+    {
+      "method": "POST",
+      "path": "/api/admin/register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/login"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/profile"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/profile"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/change-password"
+    }
+  ],
+  "/api/roles": [
+    {
+      "method": "POST",
+      "path": "/api/roles"
+    },
+    {
+      "method": "GET",
+      "path": "/api/roles"
+    },
+    {
+      "method": "GET",
+      "path": "/api/roles/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/roles/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/roles/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/roles/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/roles/:id/status"
+    }
+  ],
+  "/api/students": [
+    {
+      "method": "POST",
+      "path": "/api/students"
+    },
+    {
+      "method": "GET",
+      "path": "/api/students"
+    },
+    {
+      "method": "GET",
+      "path": "/api/students/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/students/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/students/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/students/:id/favorite"
+    },
+    {
+      "method": "GET",
+      "path": "/api/students/favorites"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/students/bulk/roll-numbers"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/students/bulk/house-names"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/students/bulk/photos"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/students/bulk/clubs"
+    }
+  ],
+  "/api/staffs": [
+    {
+      "method": "POST",
+      "path": "/api/staffs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staffs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staffs/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/staffs/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/staffs/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/staffs/:id/status"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/staffs/:id/favorite"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/staffs/bulk/assign-class-teacher"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staffs/favorites"
+    }
+  ],
+  "/api/albums": [
+    {
+      "method": "POST",
+      "path": "/api/albums"
+    },
+    {
+      "method": "GET",
+      "path": "/api/albums"
+    },
+    {
+      "method": "GET",
+      "path": "/api/albums/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/albums/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/albums/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/albums/:id/status"
+    }
+  ],
+  "/api/reports": [
+    {
+      "method": "GET",
+      "path": "/api/reports/birthdays/chart"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/birthdays/today"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/birthdays"
+    }
+  ],
+  "/api/attendance": [
+    {
+      "method": "GET",
+      "path": "/api/attendance/today"
+    },
+    {
+      "method": "GET",
+      "path": "/api/attendance/summary"
+    },
+    {
+      "method": "GET",
+      "path": "/api/attendance/dates"
+    },
+    {
+      "method": "GET",
+      "path": "/api/attendance/report/monthly"
+    },
+    {
+      "method": "GET",
+      "path": "/api/attendance/student/:studentId"
+    },
+    {
+      "method": "POST",
+      "path": "/api/attendance/mark"
+    },
+    {
+      "method": "GET",
+      "path": "/api/attendance"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/attendance/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/attendance/:id"
+    }
+  ],
+  "/api/leave-requests": [
+    {
+      "method": "POST",
+      "path": "/api/leave-requests"
+    },
+    {
+      "method": "GET",
+      "path": "/api/leave-requests"
+    },
+    {
+      "method": "GET",
+      "path": "/api/leave-requests/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/leave-requests/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/leave-requests/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/leave-requests/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/leave-requests/student/:studentId"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/leave-requests/:id/status"
+    }
+  ],
+  "/api/staff-leaves": [
+    {
+      "method": "POST",
+      "path": "/api/staff-leaves"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staff-leaves"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/staff-leaves/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/staff-leaves/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staff-leaves/stats"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/staff-leaves/:id/status"
+    }
+  ],
+  "/api/staff-attendance": [
+    {
+      "method": "POST",
+      "path": "/api/staff-attendance/mark"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staff-attendance"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/staff-attendance/:id"
+    }
+  ],
+  "/api/assignments": [
+    {
+      "method": "POST",
+      "path": "/api/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/assignments/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/assignments/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/assignments/:id"
+    }
+  ],
+  "/api/timetables": [
+    {
+      "method": "POST",
+      "path": "/api/timetables"
+    },
+    {
+      "method": "GET",
+      "path": "/api/timetables"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/timetables"
+    }
+  ],
+  "/api/promotions": [
+    {
+      "method": "GET",
+      "path": "/api/promotions/eligible"
+    },
+    {
+      "method": "GET",
+      "path": "/api/promotions/classes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/promotions/history"
+    },
+    {
+      "method": "GET",
+      "path": "/api/promotions/history/student/:studentId"
+    },
+    {
+      "method": "POST",
+      "path": "/api/promotions/promote"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/promotions/history/:id"
+    }
+  ],
+  "/api/syllabus": [
+    {
+      "method": "POST",
+      "path": "/api/syllabus"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabus"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabus/download/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/syllabus/:id"
+    }
+  ],
+  "/api/messages": [
+    {
+      "method": "POST",
+      "path": "/api/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/api/messages/sent"
+    },
+    {
+      "method": "GET",
+      "path": "/api/messages/inbox"
+    },
+    {
+      "method": "GET",
+      "path": "/api/messages/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/messages/:id"
+    }
+  ],
+  "/api/specified-messages": [
+    {
+      "method": "GET",
+      "path": "/api/specified-messages/contacts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/specified-messages/send"
+    },
+    {
+      "method": "GET",
+      "path": "/api/specified-messages/templates"
+    },
+    {
+      "method": "POST",
+      "path": "/api/specified-messages/templates"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/specified-messages/templates/:id"
+    }
+  ],
+  "/api/notices": [
+    {
+      "method": "GET",
+      "path": "/api/notices"
+    },
+    {
+      "method": "POST",
+      "path": "/api/notices"
+    },
+    {
+      "method": "GET",
+      "path": "/api/notices/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/notices/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/notices/:id"
+    }
+  ],
+  "/api/class-notices": [
+    {
+      "method": "GET",
+      "path": "/api/class-notices"
+    },
+    {
+      "method": "POST",
+      "path": "/api/class-notices"
+    },
+    {
+      "method": "GET",
+      "path": "/api/class-notices/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/class-notices/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/class-notices/:id"
+    }
+  ],
+  "/api/staff-notices": [
+    {
+      "method": "GET",
+      "path": "/api/staff-notices"
+    },
+    {
+      "method": "POST",
+      "path": "/api/staff-notices"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staff-notices/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/staff-notices/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/staff-notices/:id"
+    }
+  ],
+  "/api/circulars": [
+    {
+      "method": "POST",
+      "path": "/api/circulars"
+    },
+    {
+      "method": "GET",
+      "path": "/api/circulars"
+    },
+    {
+      "method": "GET",
+      "path": "/api/circulars/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/circulars/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/circulars/:id"
+    }
+  ],
+  "/api/sms": [
+    {
+      "method": "POST",
+      "path": "/api/sms/templates"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sms/templates"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sms/templates/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sms/templates/:id"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sms"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sms"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sms/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sms/:id"
+    }
+  ],
+  "/api/specified-sms": [
+    {
+      "method": "POST",
+      "path": "/api/specified-sms"
+    },
+    {
+      "method": "GET",
+      "path": "/api/specified-sms"
+    },
+    {
+      "method": "GET",
+      "path": "/api/specified-sms/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/specified-sms/:id"
+    }
+  ],
+  "/api/credentials": [
+    {
+      "method": "POST",
+      "path": "/api/credentials/send"
+    },
+    {
+      "method": "GET",
+      "path": "/api/credentials/logs"
+    }
+  ]
+}

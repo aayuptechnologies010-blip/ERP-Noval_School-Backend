@@ -5,10 +5,16 @@ const {
   getAllStudents,
   getStudentById,
   updateStudent,
-  deleteStudent
+  deleteStudent,
+  getFavoriteStudents,
+  toggleStudentFavorite,
+  bulkUpdateRollNumbers,
+  bulkUpdateHouseNames,
+  bulkUpdatePhotos,
+  bulkUpdateClubs
 } = require('../controllers/studentController');
 const { protect } = require('../middlewares/authMiddleware');
-const { uploadMultiple } = require('../middlewares/uploadMiddleware');
+const { uploadMultiple, uploadAny } = require('../middlewares/uploadMiddleware');
 
 // Protect all routes
 router.use(protect);
@@ -17,9 +23,27 @@ router.route('/')
   .post(uploadMultiple, createStudent)
   .get(getAllStudents);
 
+// Get favorite students (must be before /:id)
+router.get('/favorites', getFavoriteStudents);
+
+// Bulk update roll numbers (must be before /:id)
+router.put('/bulk/roll-numbers', bulkUpdateRollNumbers);
+
+// Bulk update house names (must be before /:id)
+router.put('/bulk/house-names', bulkUpdateHouseNames);
+
+// Bulk update photos (must be before /:id)
+router.put('/bulk/photos', uploadAny, bulkUpdatePhotos);
+
+// Bulk update clubs (must be before /:id)
+router.put('/bulk/clubs', bulkUpdateClubs);
+
 router.route('/:id')
   .get(getStudentById)
   .put(uploadMultiple, updateStudent)
   .delete(deleteStudent);
+
+router.route('/:id/favorite')
+  .patch(toggleStudentFavorite);
 
 module.exports = router;
