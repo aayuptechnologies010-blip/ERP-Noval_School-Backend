@@ -10,15 +10,15 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Last name is required']
   },
-  username: {
+  userId: {
     type: String,
-    required: [true, 'Username is required'],
+    required: [true, 'User ID is required'],
     unique: true
   },
   email: {
     type: String,
-    required: [true, 'Email is required'],
     unique: true,
+    sparse: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
@@ -27,7 +27,7 @@ const adminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: 6,
+    minlength: 4,
     select: false // Exclude password from query results by default
   },
   phone: {

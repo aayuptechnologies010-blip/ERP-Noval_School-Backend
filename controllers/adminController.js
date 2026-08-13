@@ -14,26 +14,29 @@ const generateToken = (id) => {
 // @access  Public
 const registerAdmin = async (req, res) => {
   try {
-    const { firstName, lastName, username, email, password } = req.body;
+    const { firstName, lastName, userId, email, password } = req.body;
 
-    if (!firstName || !lastName || !username || !email || !password) {
+    if (!firstName || !lastName || !userId || !password) {
       return res.status(400).json({ message: 'Please add all required fields' });
     }
 
     // Check if admin exists
+    const query = [{ userId }];
+    if (email) query.push({ email });
+    
     const adminExists = await Admin.findOne({ 
-      $or: [{ email }, { username }] 
+      $or: query 
     });
 
     if (adminExists) {
-      return res.status(400).json({ message: 'Admin with this email or username already exists' });
+      return res.status(400).json({ message: 'Admin with this User ID or email already exists' });
     }
 
     // Create admin
     const admin = await Admin.create({
       firstName,
       lastName,
-      username,
+      userId,
       email,
       password,
     });
@@ -43,7 +46,7 @@ const registerAdmin = async (req, res) => {
         _id: admin.id,
         firstName: admin.firstName,
         lastName: admin.lastName,
-        username: admin.username,
+        userId: admin.userId,
         email: admin.email,
         token: generateToken(admin._id),
       });
@@ -60,17 +63,17 @@ const registerAdmin = async (req, res) => {
 // @access  Public
 const loginAdmin = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { userId, password } = req.body;
 
-    // Check for user username
-    const admin = await Admin.findOne({ username }).select('+password');
+    // Check for user userId
+    const admin = await Admin.findOne({ userId }).select('+password');
 
     if (admin && (await admin.matchPassword(password))) {
       res.json({
         _id: admin.id,
         firstName: admin.firstName,
         lastName: admin.lastName,
-        username: admin.username,
+        userId: admin.userId,
         email: admin.email,
         profileImage: admin.profileImage,
         token: generateToken(admin._id),
@@ -133,7 +136,7 @@ const updateAdminProfile = async (req, res) => {
         _id: updatedAdmin.id,
         firstName: updatedAdmin.firstName,
         lastName: updatedAdmin.lastName,
-        username: updatedAdmin.username,
+        userId: updatedAdmin.userId,
         email: updatedAdmin.email,
         phone: updatedAdmin.phone,
         gender: updatedAdmin.gender,
