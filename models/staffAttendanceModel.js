@@ -29,6 +29,16 @@ const staffAttendanceSchema = new mongoose.Schema(
       default: '',
       trim: true,
     },
+    checkIn: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    checkOut: {
+      type: String,
+      default: '',
+      trim: true,
+    },
     markedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Admin',

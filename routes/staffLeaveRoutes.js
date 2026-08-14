@@ -6,12 +6,14 @@ const {
   updateStaffLeaveStatus,
   deleteStaffLeave,
   getStaffLeaveStats,
+  getMyLeaves,
 } = require('../controllers/staffLeaveController');
 const { protect } = require('../middlewares/authMiddleware');
 
 router.use(protect);
-
 router.get('/stats', getStaffLeaveStats);
+
+router.get('/my-leaves', getMyLeaves);
 
 router.route('/')
   .post(createStaffLeave)

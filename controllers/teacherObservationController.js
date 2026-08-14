@@ -105,11 +105,72 @@ const deleteObservation = async (req, res) => {
   }
 };
 
+// @desc    Get teacher observation report
+// @route   GET /api/teacher-observations/report
+// @access  Private (Admin)
+const getObservationReport = async (req, res) => {
+  try {
+    const { staff, fromDate, toDate } = req.query;
+    
+    const filter = {};
+    
+    if (staff) {
+      filter.staff = staff;
+    }
+    
+    if (fromDate || toDate) {
+      filter.observationDate = {};
+      if (fromDate) {
+        // Set to start of the day
+        const start = new Date(fromDate);
+        start.setHours(0, 0, 0, 0);
+        filter.observationDate.$gte = start;
+      }
+      if (toDate) {
+        // Set to end of the day
+        const end = new Date(toDate);
+        end.setHours(23, 59, 59, 999);
+        filter.observationDate.$lte = end;
+      }
+    }
+
+    const observations = await TeacherObservation.find(filter)
+      .populate('staff', 'firstName lastName')
+      .sort({ observationDate: -1 });
+
+    // Format response to match the UI requirements
+    const reportData = observations.map(obs => {
+      const staffName = obs.staff 
+        ? `${obs.staff.firstName || ''} ${obs.staff.lastName || ''}`.trim()
+        : 'Unknown';
+        
+      return {
+        id: obs._id,
+        teacherName: staffName,
+        date: obs.observationDate,
+        subject: obs.subject || '',
+        topic: obs.topic || '',
+        score: obs.rating,
+        remarks: obs.remarks
+      };
+    });
+
+    res.json({
+      success: true,
+      count: reportData.length,
+      data: reportData
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createObservation,
   getAllObservations,
   getObservationsByStaff,
   getObservationById,
   updateObservation,
-  deleteObservation
+  deleteObservation,
+  getObservationReport
 };

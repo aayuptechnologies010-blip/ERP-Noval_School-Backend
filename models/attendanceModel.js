@@ -39,8 +39,19 @@ const attendanceSchema = new mongoose.Schema(
       required: [true, 'Attendance status is required'],
     },
 
-    // Optional remark (e.g., "Medical Leave", "Field Trip")
     remarks: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+
+    // Check In and Check Out times
+    checkIn: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    checkOut: {
       type: String,
       default: '',
       trim: true,

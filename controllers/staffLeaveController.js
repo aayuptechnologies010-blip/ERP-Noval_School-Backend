@@ -17,10 +17,10 @@ const STAFF_SELECT = 'firstName lastName designation staffPhoto title';
 
 const createStaffLeave = async (req, res) => {
   try {
-    const { staffId, fromDate, toDate, reason } = req.body;
+    const { staffId, leaveType, fromDate, toDate, reason } = req.body;
 
-    if (!staffId || !fromDate || !toDate || !reason) {
-      return res.status(400).json({ message: 'staffId, fromDate, toDate, and reason are required.' });
+    if (!staffId || !leaveType || !fromDate || !toDate || !reason) {
+      return res.status(400).json({ message: 'staffId, leaveType, fromDate, toDate, and reason are required.' });
     }
 
     const staff = await Staff.findById(staffId).select(STAFF_SELECT);
@@ -36,6 +36,7 @@ const createStaffLeave = async (req, res) => {
 
     const leaveRequest = new StaffLeave({
       staffId,
+      leaveType,
       fromDate: toStartOfDay(fromDate),
       toDate: toEndOfDay(toDate),
       reason,
@@ -163,10 +164,38 @@ const getStaffLeaveStats = async (req, res) => {
   }
 };
 
+const getMyLeaves = async (req, res) => {
+  try {
+    const { staffId } = req.query;
+
+    if (!staffId) {
+      return res.status(400).json({ message: 'staffId query param is required.' });
+    }
+
+    const records = await StaffLeave.find({ staffId }).sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      records: records.map(r => ({
+        id: r._id,
+        appliedOn: r.createdAt.toISOString().split('T')[0],
+        leaveType: r.leaveType || 'General Leave',
+        fromDate: r.fromDate.toISOString().split('T')[0],
+        toDate: r.toDate.toISOString().split('T')[0],
+        status: r.status,
+        reason: r.reason
+      }))
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createStaffLeave,
   getAllStaffLeaves,
   updateStaffLeaveStatus,
   deleteStaffLeave,
   getStaffLeaveStats,
+  getMyLeaves,
 };

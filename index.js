@@ -63,6 +63,12 @@ app.use('/api/sms', require('./routes/smsRoutes'));
 app.use('/api/specified-sms', require('./routes/specifiedSmsRoutes'));
 app.use('/api/credentials', require('./routes/credentialsRoutes'));
 app.use('/api/teacher-observations', require('./routes/teacherObservationRoutes'));
+app.use('/api/tasks', require('./routes/taskRoutes'));
+app.use('/api/payslips', require('./routes/payslipRoutes'));
+app.use('/api/books', require('./routes/bookRoutes'));
+app.use('/api/ebooks', require('./routes/ebookRoutes'));
+app.use('/api/activities', require('./routes/activityRoutes'));
+app.use('/api/questionnaires', require('./routes/questionnaireRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

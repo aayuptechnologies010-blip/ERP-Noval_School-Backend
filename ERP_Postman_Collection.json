@@ -1772,6 +1772,37 @@
           "response": []
         },
         {
+          "name": "GET /api/attendance/my-attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/attendance/my-attendance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "attendance",
+                "my-attendance"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
           "name": "POST /api/attendance/mark",
           "request": {
             "method": "POST",
@@ -2182,6 +2213,37 @@
           "response": []
         },
         {
+          "name": "GET /api/leave-requests/my-leaves",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/leave-requests/my-leaves",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "leave-requests",
+                "my-leaves"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
           "name": "PATCH /api/leave-requests/:id/status",
           "request": {
             "method": "PATCH",
@@ -2414,6 +2476,37 @@
           "response": []
         },
         {
+          "name": "GET /api/staff-leaves/my-leaves",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/staff-leaves/my-leaves",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "staff-leaves",
+                "my-leaves"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
           "name": "PATCH /api/staff-leaves/:id/status",
           "request": {
             "method": "PATCH",
@@ -2528,6 +2621,37 @@
               "path": [
                 "api",
                 "staff-attendance"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/staff-attendance/my-attendance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/staff-attendance/my-attendance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "staff-attendance",
+                "my-attendance"
               ],
               "variable": []
             }
@@ -4957,6 +5081,37 @@
           "response": []
         },
         {
+          "name": "GET /api/teacher-observations/report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/teacher-observations/report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "teacher-observations",
+                "report"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
           "name": "GET /api/teacher-observations/staff/:staffId",
           "request": {
             "method": "GET",
@@ -5098,6 +5253,700 @@
               "path": [
                 "api",
                 "teacher-observations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REPLACE_ME"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "TASKS",
+      "item": [
+        {
+          "name": "POST /api/tasks",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/tasks/my-tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/my-tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "my-tasks"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/tasks/:id/done",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/:id/done",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                ":id",
+                "done"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REPLACE_ME"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PAYSLIPS",
+      "item": [
+        {
+          "name": "POST /api/payslips",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payslips",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payslips"
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/payslips/my-payslip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payslips/my-payslip",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payslips",
+                "my-payslip"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "BOOKS",
+      "item": [
+        {
+          "name": "POST /api/books",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/books",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/books",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/books",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "books"
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/books/:id/request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/books/:id/request",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "books",
+                ":id",
+                "request"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REPLACE_ME"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "EBOOKS",
+      "item": [
+        {
+          "name": "POST /api/ebooks",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/ebooks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "ebooks"
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/ebooks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/ebooks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "ebooks"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ACTIVITIES",
+      "item": [
+        {
+          "name": "POST /api/activities",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activities",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activities"
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/activities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/activities",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "activities"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "QUESTIONNAIRES",
+      "item": [
+        {
+          "name": "POST /api/questionnaires",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/questionnaires",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questionnaires"
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/questionnaires",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/questionnaires",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questionnaires"
+              ],
+              "variable": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/questionnaires/:id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/questionnaires/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questionnaires",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REPLACE_ME"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /api/questionnaires/:id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/questionnaires/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questionnaires",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REPLACE_ME"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /api/questionnaires/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/questionnaires/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questionnaires",
                 ":id"
               ],
               "variable": [

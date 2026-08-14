@@ -25,6 +25,13 @@ const leaveRequestSchema = new mongoose.Schema(
       default: 1,
     },
 
+    // Leave type (e.g. Sick Leave, Casual Leave)
+    leaveType: {
+      type: String,
+      required: [true, 'Leave type is required'],
+      trim: true,
+    },
+
     // Reason for leave
     reason: {
       type: String,

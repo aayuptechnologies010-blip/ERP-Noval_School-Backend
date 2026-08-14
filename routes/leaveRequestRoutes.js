@@ -9,6 +9,7 @@ const {
   deleteLeaveRequest,
   getStudentLeaveRequests,
   getLeaveStats,
+  getMyLeaves,
 } = require('../controllers/leaveRequestController');
 
 const { protect } = require('../middlewares/authMiddleware');
@@ -23,6 +24,9 @@ router.get('/stats', getLeaveStats);
 
 // GET /api/leave-requests/student/:sid  → Student's leave history
 router.get('/student/:studentId', getStudentLeaveRequests);
+
+// GET /api/leave-requests/my-leaves     → Student's My Leaves (UI format)
+router.get('/my-leaves', getMyLeaves);
 
 // ─── Main CRUD routes ──────────────────────────────────────────────────────
 

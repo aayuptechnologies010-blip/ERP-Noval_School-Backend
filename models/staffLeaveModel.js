@@ -19,6 +19,11 @@ const staffLeaveSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    leaveType: {
+      type: String,
+      required: [true, 'Leave type is required'],
+      trim: true,
+    },
     reason: {
       type: String,
       required: [true, 'Reason is required'],

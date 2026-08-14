@@ -197,6 +197,10 @@
       "path": "/api/attendance/student/:studentId"
     },
     {
+      "method": "GET",
+      "path": "/api/attendance/my-attendance"
+    },
+    {
       "method": "POST",
       "path": "/api/attendance/mark"
     },
@@ -243,6 +247,10 @@
       "path": "/api/leave-requests/student/:studentId"
     },
     {
+      "method": "GET",
+      "path": "/api/leave-requests/my-leaves"
+    },
+    {
       "method": "PATCH",
       "path": "/api/leave-requests/:id/status"
     }
@@ -269,6 +277,10 @@
       "path": "/api/staff-leaves/stats"
     },
     {
+      "method": "GET",
+      "path": "/api/staff-leaves/my-leaves"
+    },
+    {
       "method": "PATCH",
       "path": "/api/staff-leaves/:id/status"
     }
@@ -281,6 +293,10 @@
     {
       "method": "GET",
       "path": "/api/staff-attendance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staff-attendance/my-attendance"
     },
     {
       "method": "PUT",
@@ -572,6 +588,10 @@
     },
     {
       "method": "GET",
+      "path": "/api/teacher-observations/report"
+    },
+    {
+      "method": "GET",
       "path": "/api/teacher-observations/staff/:staffId"
     },
     {
@@ -585,6 +605,90 @@
     {
       "method": "DELETE",
       "path": "/api/teacher-observations/:id"
+    }
+  ],
+  "/api/tasks": [
+    {
+      "method": "POST",
+      "path": "/api/tasks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks/my-tasks"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tasks/:id/done"
+    }
+  ],
+  "/api/payslips": [
+    {
+      "method": "POST",
+      "path": "/api/payslips"
+    },
+    {
+      "method": "GET",
+      "path": "/api/payslips/my-payslip"
+    }
+  ],
+  "/api/books": [
+    {
+      "method": "POST",
+      "path": "/api/books"
+    },
+    {
+      "method": "GET",
+      "path": "/api/books"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/books"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/books/:id/request"
+    }
+  ],
+  "/api/ebooks": [
+    {
+      "method": "POST",
+      "path": "/api/ebooks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/ebooks"
+    }
+  ],
+  "/api/activities": [
+    {
+      "method": "POST",
+      "path": "/api/activities"
+    },
+    {
+      "method": "GET",
+      "path": "/api/activities"
+    }
+  ],
+  "/api/questionnaires": [
+    {
+      "method": "POST",
+      "path": "/api/questionnaires"
+    },
+    {
+      "method": "GET",
+      "path": "/api/questionnaires"
+    },
+    {
+      "method": "GET",
+      "path": "/api/questionnaires/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/questionnaires/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/questionnaires/:id"
     }
   ]
 }

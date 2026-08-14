@@ -41,11 +41,11 @@ const STUDENT_SELECT =
  */
 const createLeaveRequest = async (req, res) => {
   try {
-    const { studentId, fromDate, toDate, reason } = req.body;
+    const { studentId, leaveType, fromDate, toDate, reason } = req.body;
 
-    if (!studentId || !fromDate || !toDate || !reason) {
+    if (!studentId || !leaveType || !fromDate || !toDate || !reason) {
       return res.status(400).json({
-        message: 'studentId, fromDate, toDate, and reason are required.',
+        message: 'studentId, leaveType, fromDate, toDate, and reason are required.',
       });
     }
 
@@ -64,6 +64,7 @@ const createLeaveRequest = async (req, res) => {
 
     const leaveRequest = new LeaveRequest({
       studentId,
+      leaveType,
       fromDate: toStartOfDay(fromDate),
       toDate: toEndOfDay(toDate),
       reason,
@@ -352,6 +353,33 @@ const getLeaveStats = async (req, res) => {
   }
 };
 
+const getMyLeaves = async (req, res) => {
+  try {
+    const { studentId } = req.query;
+
+    if (!studentId) {
+      return res.status(400).json({ message: 'studentId query param is required.' });
+    }
+
+    const records = await LeaveRequest.find({ studentId }).sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      records: records.map(r => ({
+        id: r._id,
+        appliedOn: r.createdAt.toISOString().split('T')[0],
+        leaveType: r.leaveType || 'General Leave',
+        fromDate: r.fromDate.toISOString().split('T')[0],
+        toDate: r.toDate.toISOString().split('T')[0],
+        status: r.status,
+        reason: r.reason
+      }))
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // ───────────────────────────────────────────────────────────────────────────
 
 module.exports = {
@@ -362,4 +390,5 @@ module.exports = {
   deleteLeaveRequest,
   getStudentLeaveRequests,
   getLeaveStats,
+  getMyLeaves,
 };

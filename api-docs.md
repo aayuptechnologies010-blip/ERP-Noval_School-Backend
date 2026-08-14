@@ -2994,3 +2994,291 @@ Delete an observation log.
 curl -X DELETE http://localhost:5000/api/teacher-observations/669f123456789abcdef01234 \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
+
+## Teacher Observations
+
+### Get Observation Report
+Fetch the observation report for teachers based on date range or specific teacher.
+
+```bash
+curl -X GET 'http://localhost:5000/api/teacher-observations/report?fromDate=2023-10-01&toDate=2023-10-31' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## My Attendance
+
+### Get Staff My Attendance
+Fetch the attendance report for a specific staff member for a given month and year.
+
+```bash
+curl -X GET 'http://localhost:5000/api/staff-attendance/my-attendance?staffId=STAFF_ID_HERE&month=10&year=2023' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Student My Attendance
+Fetch the attendance report for a specific student for a given month and year.
+
+```bash
+curl -X GET 'http://localhost:5000/api/attendance/my-attendance?studentId=STUDENT_ID_HERE&month=10&year=2023' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## My Leave
+
+### Apply Leave (Staff)
+Apply for a new leave request.
+
+```bash
+curl -X POST 'http://localhost:5000/api/staff-leaves' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "staffId": "STAFF_ID_HERE",
+    "leaveType": "Sick Leave",
+    "fromDate": "2023-10-10",
+    "toDate": "2023-10-11",
+    "reason": "Feeling unwell"
+  }'
+```
+
+### Get Staff My Leaves
+Fetch the leave history for a specific staff member.
+
+```bash
+curl -X GET 'http://localhost:5000/api/staff-leaves/my-leaves?staffId=STAFF_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Apply Leave (Student)
+Apply for a new leave request.
+
+```bash
+curl -X POST 'http://localhost:5000/api/leave-requests' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "studentId": "STUDENT_ID_HERE",
+    "leaveType": "Casual Leave",
+    "fromDate": "2023-10-15",
+    "toDate": "2023-10-16",
+    "reason": "Family function"
+  }'
+```
+
+### Get Student My Leaves
+Fetch the leave history for a specific student.
+
+```bash
+curl -X GET 'http://localhost:5000/api/leave-requests/my-leaves?studentId=STUDENT_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## My Pending Tasks
+
+### Create Task
+Create a new task assigned to a user.
+
+```bash
+curl -X POST 'http://localhost:5000/api/tasks' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "assignedTo": "USER_ID_HERE",
+    "taskDescription": "Submit quarterly report",
+    "type": "Task",
+    "dueDate": "2023-10-25"
+  }'
+```
+
+### Get My Pending Tasks
+Fetch the pending and overdue tasks for a specific user.
+
+```bash
+curl -X GET 'http://localhost:5000/api/tasks/my-tasks?userId=USER_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Mark Task Done
+Mark a specific task as Done.
+
+```bash
+curl -X PATCH 'http://localhost:5000/api/tasks/TASK_ID_HERE/done' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## My Payslip
+
+### Generate Payslip
+Generate a new payslip for a staff member for a specific month and year.
+
+```bash
+curl -X POST 'http://localhost:5000/api/payslips' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "staffId": "STAFF_ID_HERE",
+    "month": "October",
+    "year": 2023,
+    "earnings": {
+      "basicPay": 45000,
+      "houseRentAllowance": 8000,
+      "conveyanceAllowance": 2000,
+      "medicalAllowance": 1500
+    },
+    "deductions": {
+      "providentFund": 3500,
+      "professionalTax": 200,
+      "incomeTax": 1800
+    }
+  }'
+```
+
+### Get My Payslip
+Fetch the generated payslip details for a specific staff, month, and year.
+
+```bash
+curl -X GET 'http://localhost:5000/api/payslips/my-payslip?staffId=STAFF_ID_HERE&month=October&year=2023' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## Library Management
+
+### Add Book
+Add a new book to the library.
+
+```bash
+curl -X POST 'http://localhost:5000/api/books' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accNo": "LIB-001",
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "category": "Computer Science"
+  }'
+```
+
+### Get All Books
+Fetch all books in the library. Supports filtering by status (Available/Issued) and searching (title/author/accNo).
+
+```bash
+curl -X GET 'http://localhost:5000/api/books?status=Available&search=Algorithms' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Request Book
+Request a specific available book.
+
+```bash
+curl -X PATCH 'http://localhost:5000/api/books/BOOK_ID_HERE/request' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## E-Books Library
+
+### Add E-Book
+Add a new e-book to the library.
+
+```bash
+curl -X POST 'http://localhost:5000/api/ebooks' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -F 'title=Physics Fundamentals' \
+  -F 'author=NCERT' \
+  -F 'className=Class 10' \
+  -F 'subject=Physics' \
+  -F 'pdfFile=@/path/to/physics10.pdf'
+```
+
+### Get All E-Books
+Fetch all e-books. Supports filtering by subject/class and searching by title/author.
+
+```bash
+curl -X GET 'http://localhost:5000/api/ebooks?subject=Physics' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## Activities
+
+### Add New Activity
+Create a new school activity or event.
+
+```bash
+curl -X POST 'http://localhost:5000/api/activities' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Annual Sports Day",
+    "dayType": "Full Day",
+    "duration": "1 Day",
+    "fromDate": "2023-11-15",
+    "assignTo": "All Students",
+    "isActive": true,
+    "showOnWebsite": true
+  }'
+```
+
+### Get All Activities
+Fetch the list of all activities.
+
+```bash
+curl -X GET 'http://localhost:5000/api/activities' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+## Questionnaire Management
+
+### Create New Questionnaire
+Create a new survey or questionnaire.
+
+```bash
+curl -X POST 'http://localhost:5000/api/questionnaires' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Student Feedback Survey",
+    "targetAudience": "Students",
+    "status": "Active"
+  }'
+```
+
+### Get All Questionnaires
+Fetch the list of all questionnaires.
+
+```bash
+curl -X GET 'http://localhost:5000/api/questionnaires' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Questionnaire
+Update an existing questionnaire (e.g., change status to Closed).
+
+```bash
+curl -X PUT 'http://localhost:5000/api/questionnaires/QUESTIONNAIRE_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "Closed"
+  }'
+```
+
+### Delete Questionnaire
+Delete an existing questionnaire.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/questionnaires/QUESTIONNAIRE_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```

@@ -11,6 +11,7 @@ const {
   getTodayAttendanceSummary,
   getAttendanceDates,
   deleteAttendanceRecord,
+  getMyAttendance,
 } = require('../controllers/attendanceController');
 
 const { protect } = require('../middlewares/authMiddleware');
@@ -34,6 +35,9 @@ router.get('/report/monthly', getMonthlyReport);
 
 // GET /api/attendance/student/:studentId → Student-wise attendance history
 router.get('/student/:studentId', getStudentAttendance);
+
+// GET /api/attendance/my-attendance → Student's my attendance (for UI)
+router.get('/my-attendance', getMyAttendance);
 
 // ─── Main routes ───────────────────────────────────────────────────────────
 

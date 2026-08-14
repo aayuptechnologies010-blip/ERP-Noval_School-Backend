@@ -68,6 +68,8 @@ const markAttendance = async (req, res) => {
             section: section || '',
             status: r.status,
             remarks: r.remarks || '',
+            checkIn: r.checkIn || '',
+            checkOut: r.checkOut || '',
             markedBy,
           },
         },
@@ -142,7 +144,7 @@ const getAttendanceByClassDate = async (req, res) => {
  */
 const updateSingleAttendance = async (req, res) => {
   try {
-    const { status, remarks } = req.body;
+    const { status, remarks, checkIn, checkOut } = req.body;
 
     if (!status) {
       return res.status(400).json({ message: 'status is required.' });
@@ -156,6 +158,8 @@ const updateSingleAttendance = async (req, res) => {
 
     record.status = status;
     record.remarks = remarks !== undefined ? remarks : record.remarks;
+    record.checkIn = checkIn !== undefined ? checkIn : record.checkIn;
+    record.checkOut = checkOut !== undefined ? checkOut : record.checkOut;
     record.markedBy = req.user?._id || record.markedBy;
 
     const updated = await record.save();
@@ -457,6 +461,51 @@ const deleteAttendanceRecord = async (req, res) => {
 
 // ───────────────────────────────────────────────────────────────────────────
 
+const getMyAttendance = async (req, res) => {
+  try {
+    const { studentId, month, year } = req.query;
+
+    if (!studentId || !month || !year) {
+      return res.status(400).json({ message: 'studentId, month, and year query params are required.' });
+    }
+
+    const startDate = new Date(Date.UTC(year, month - 1, 1));
+    const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
+
+    const filter = {
+      studentId,
+      date: { $gte: startDate, $lte: endDate }
+    };
+
+    const records = await Attendance.find(filter).sort({ date: 1 });
+    const summary = buildSummary(records);
+
+    res.json({
+      success: true,
+      month: `${year}-${month}`,
+      summary: {
+        totalPresent: summary.Present,
+        totalAbsent: summary.Absent,
+        totalLeave: summary.Leave,
+        totalHalfDay: summary.HalfDay,
+        totalLate: summary.Late
+      },
+      records: records.map(r => ({
+        id: r._id,
+        date: r.date,
+        status: r.status,
+        checkIn: r.checkIn || '-',
+        checkOut: r.checkOut || '-',
+        remarks: r.remarks
+      }))
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ───────────────────────────────────────────────────────────────────────────
+
 module.exports = {
   markAttendance,
   getAttendanceByClassDate,
@@ -467,4 +516,5 @@ module.exports = {
   getTodayAttendanceSummary,
   getAttendanceDates,
   deleteAttendanceRecord,
+  getMyAttendance,
 };
