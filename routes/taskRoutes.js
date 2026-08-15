@@ -2,20 +2,22 @@ const express = require('express');
 const router = express.Router();
 const {
   createTask,
-  getMyTasks,
-  markTaskDone,
+  getTasks,
+  getTaskById,
+  updateTask,
+  deleteTask
 } = require('../controllers/taskController');
 const { protect } = require('../middlewares/authMiddleware');
 
 router.use(protect);
 
-// Create task
-router.post('/', createTask);
+router.route('/')
+  .get(getTasks)
+  .post(createTask);
 
-// Get my tasks
-router.get('/my-tasks', getMyTasks);
-
-// Mark task done
-router.patch('/:id/done', markTaskDone);
+router.route('/:id')
+  .get(getTaskById)
+  .put(updateTask)
+  .delete(deleteTask);
 
 module.exports = router;

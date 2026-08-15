@@ -69,6 +69,16 @@ app.use('/api/books', require('./routes/bookRoutes'));
 app.use('/api/ebooks', require('./routes/ebookRoutes'));
 app.use('/api/activities', require('./routes/activityRoutes'));
 app.use('/api/questionnaires', require('./routes/questionnaireRoutes'));
+app.use('/api/thoughts', require('./routes/thoughtRoutes'));
+app.use('/api/appointments', require('./routes/appointmentRoutes'));
+app.use('/api/appreciations', require('./routes/appreciationRoutes'));
+app.use('/api/rewards', require('./routes/rewardRoutes'));
+app.use('/api/student-appreciations', require('./routes/studentAppreciationRoutes'));
+app.use('/api/staff-appreciations', require('./routes/staffAppreciationRoutes'));
+app.use('/api/infractions', require('./routes/infractionRoutes'));
+app.use('/api/consequences', require('./routes/consequenceRoutes'));
+app.use('/api/student-infractions', require('./routes/studentInfractionRoutes'));
+app.use('/api/staff-infractions', require('./routes/staffInfractionRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

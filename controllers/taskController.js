@@ -5,101 +5,107 @@ const Task = require('../models/taskModel');
 // @access  Private
 const createTask = async (req, res) => {
   try {
-    const { assignedTo, taskDescription, type, dueDate, status } = req.body;
+    const { title, assignedTo, priority, status, dueDate, description } = req.body;
 
-    if (!assignedTo || !taskDescription || !type || !dueDate) {
-      return res.status(400).json({
-        message: 'assignedTo, taskDescription, type, and dueDate are required.',
-      });
+    if (!title || !assignedTo || !priority || !dueDate) {
+      return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
-    const task = new Task({
+    const task = await Task.create({
+      title,
       assignedTo,
-      taskDescription,
-      type,
-      dueDate,
+      priority,
       status: status || 'Pending',
-      assignedBy: req.user?._id || null,
+      dueDate,
+      description,
+      createdBy: req.user ? req.user._id : undefined
     });
 
-    const savedTask = await task.save();
-
-    res.status(201).json({
-      message: 'Task created successfully',
-      task: savedTask,
-    });
+    res.status(201).json(task);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Error creating task', error: error.message });
   }
 };
 
-// @desc    Get pending tasks for a specific user
-// @route   GET /api/tasks/my-tasks?userId=123
+// @desc    Get all tasks
+// @route   GET /api/tasks
 // @access  Private
-const getMyTasks = async (req, res) => {
+const getTasks = async (req, res) => {
   try {
-    const { userId } = req.query;
-
-    if (!userId) {
-      return res.status(400).json({ message: 'userId query parameter is required.' });
+    const { status, priority } = req.query;
+    const filter = {};
+    
+    if (status && status !== 'All') {
+      filter.status = status;
+    }
+    if (priority && priority !== 'All Priorities') {
+      filter.priority = priority;
     }
 
-    // Optional: auto-update overdue tasks before fetching
-    const now = new Date();
-    await Task.updateMany(
-      { assignedTo: userId, status: 'Pending', dueDate: { $lt: now } },
-      { $set: { status: 'Overdue' } }
-    );
-
-    // Fetch tasks
-    const tasks = await Task.find({ assignedTo: userId, status: { $in: ['Pending', 'Overdue'] } })
-      .sort({ dueDate: 1 }); // Sort by closest due date
-
-    res.json({
-      success: true,
-      count: tasks.length,
-      records: tasks.map(t => ({
-        id: t._id,
-        taskDescription: t.taskDescription,
-        type: t.type,
-        dueDate: t.dueDate.toISOString().split('T')[0],
-        status: t.status,
-      }))
-    });
+    const tasks = await Task.find(filter).sort({ dueDate: 1 });
+    res.status(200).json(tasks);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: 'Error fetching tasks', error: error.message });
   }
 };
 
-// @desc    Mark a task as done
-// @route   PATCH /api/tasks/:id/done
+// @desc    Get a single task by ID
+// @route   GET /api/tasks/:id
 // @access  Private
-const markTaskDone = async (req, res) => {
+const getTaskById = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching task', error: error.message });
+  }
+};
+
+// @desc    Update a task
+// @route   PUT /api/tasks/:id
+// @access  Private
+const updateTask = async (req, res) => {
+  try {
+    const { title, assignedTo, priority, status, dueDate, description } = req.body;
+    
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      { title, assignedTo, priority, status, dueDate, description },
+      { new: true, runValidators: true }
+    );
 
     if (!task) {
-      return res.status(404).json({ message: 'Task not found.' });
+      return res.status(404).json({ message: 'Task not found' });
     }
-
-    task.status = 'Done';
-    const updatedTask = await task.save();
-
-    res.json({
-      message: 'Task marked as done successfully',
-      task: {
-        id: updatedTask._id,
-        taskDescription: updatedTask.taskDescription,
-        status: updatedTask.status,
-      }
-    });
+    
+    res.status(200).json(task);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Error updating task', error: error.message });
+  }
+};
+
+// @desc    Delete a task
+// @route   DELETE /api/tasks/:id
+// @access  Private
+const deleteTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    res.status(200).json({ message: 'Task deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting task', error: error.message });
   }
 };
 
 module.exports = {
   createTask,
-  getMyTasks,
-  markTaskDone,
+  getTasks,
+  getTaskById,
+  updateTask,
+  deleteTask
 };

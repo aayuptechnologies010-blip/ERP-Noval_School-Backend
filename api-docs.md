@@ -3282,3 +3282,702 @@ curl -X DELETE 'http://localhost:5000/api/questionnaires/QUESTIONNAIRE_ID_HERE' 
   -H "Authorization: Bearer YOUR_TOKEN_HERE" \
   -H "Content-Type: application/json"
 ```
+
+---
+
+## Thought of the Day
+
+### Create a Thought
+Create a new thought of the day.
+
+```bash
+curl -X POST 'http://localhost:5000/api/thoughts' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "thought": "Be the change that you wish to see in the world.",
+    "author": "Mahatma Gandhi",
+    "date": "2023-10-01"
+  }'
+```
+
+### Get All Thoughts
+Fetch all thoughts of the day, sorted by date (newest first).
+
+```bash
+curl -X GET 'http://localhost:5000/api/thoughts' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Delete Thought
+Delete an existing thought of the day by ID.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/thoughts/THOUGHT_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Appointment Management
+
+### Create an Appointment
+Create a new appointment.
+
+```bash
+curl -X POST 'http://localhost:5000/api/appointments' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Parent-Teacher Meeting",
+    "personName": "Mr. Rajesh Kumar",
+    "type": "Parent",
+    "status": "Confirmed",
+    "date": "2023-10-10",
+    "time": "10:00 AM",
+    "notes": "Regarding academic performance of child..."
+  }'
+```
+
+### Get All Appointments
+Fetch all appointments. Optionally filter by status (e.g., `?status=Pending`).
+
+```bash
+curl -X GET 'http://localhost:5000/api/appointments?status=All' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Appointment
+Fetch details of a specific appointment by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/appointments/APPOINTMENT_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Appointment
+Update an existing appointment.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/appointments/APPOINTMENT_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "Pending",
+    "time": "11:30 AM"
+  }'
+```
+
+### Delete Appointment
+Delete an existing appointment.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/appointments/APPOINTMENT_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Task Management
+
+### Create a Task
+Create a new task.
+
+```bash
+curl -X POST 'http://localhost:5000/api/tasks' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Prepare Monthly Report",
+    "assignedTo": "Miss Priya Sharma",
+    "priority": "High",
+    "status": "In Progress",
+    "dueDate": "2023-10-15",
+    "description": "Compile attendance and academic report for October."
+  }'
+```
+
+### Get All Tasks
+Fetch all tasks. Optionally filter by status or priority (e.g., `?status=Pending&priority=High`).
+
+```bash
+curl -X GET 'http://localhost:5000/api/tasks?status=All&priority=All%20Priorities' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Task
+Fetch details of a specific task by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/tasks/TASK_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Task
+Update an existing task.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/tasks/TASK_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "Completed"
+  }'
+```
+
+### Delete Task
+Delete an existing task.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/tasks/TASK_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Define Appreciation
+
+### Create an Appreciation
+Define a new appreciation type (e.g., Best Student Award).
+
+```bash
+curl -X POST 'http://localhost:5000/api/appreciations' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Best Student Award",
+    "category": "Academic",
+    "points": 10,
+    "description": "Given to students with highest academic performance."
+  }'
+```
+
+### Get All Appreciations
+Fetch all defined appreciation types.
+
+```bash
+curl -X GET 'http://localhost:5000/api/appreciations' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Appreciation
+Fetch details of a specific appreciation by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/appreciations/APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Appreciation
+Update an existing appreciation definition.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/appreciations/APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "points": 15
+  }'
+```
+
+### Delete Appreciation
+Delete an existing appreciation definition.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/appreciations/APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Define Rewards
+
+### Create a Reward
+Define a new reward (e.g., Gold Medal).
+
+```bash
+curl -X POST 'http://localhost:5000/api/rewards' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Gold Medal",
+    "category": "Academic",
+    "value": 500,
+    "description": "Awarded for top academic performance."
+  }'
+```
+
+### Get All Rewards
+Fetch all defined rewards.
+
+```bash
+curl -X GET 'http://localhost:5000/api/rewards' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Reward
+Fetch details of a specific reward by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/rewards/REWARD_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Reward
+Update an existing reward definition.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/rewards/REWARD_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "value": 1000
+  }'
+```
+
+### Delete Reward
+Delete an existing reward definition.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/rewards/REWARD_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Student Appreciation
+
+### Give Appreciation to Student
+Assign an appreciation (e.g., Best Student Award) to a specific student.
+
+```bash
+curl -X POST 'http://localhost:5000/api/student-appreciations' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "studentName": "Aarav Sharma",
+    "rollNo": "1001",
+    "studentClass": "Class 10",
+    "appreciationType": "Best Student Award",
+    "points": 10,
+    "date": "2023-10-01"
+  }'
+```
+
+### Get All Student Appreciations
+Fetch all appreciations given to students. Optionally filter by search (name/rollNo) or class (e.g., `?search=Aarav&studentClass=Class%2010`).
+
+```bash
+curl -X GET 'http://localhost:5000/api/student-appreciations?search=&studentClass=All' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Student Appreciation
+Fetch details of a specific student appreciation by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/student-appreciations/STUDENT_APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Student Appreciation
+Update an existing student appreciation record.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/student-appreciations/STUDENT_APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "points": 15
+  }'
+```
+
+### Delete Student Appreciation
+Delete an existing student appreciation record.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/student-appreciations/STUDENT_APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Appreciation Report
+
+### Get Appreciation Report
+Fetch the appreciation report combining both Student and Staff appreciations. Supports filtering by type, date range, and search keyword. Also returns summary statistics.
+
+```bash
+# Get All Records
+curl -X GET 'http://localhost:5000/api/reports/appreciations?type=All' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+
+# Get Records with Date Filter and Search
+curl -X GET 'http://localhost:5000/api/reports/appreciations?type=Student&fromDate=2023-10-01&toDate=2023-10-31&search=Aarav' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Staff Appreciation
+
+### Give Appreciation to Staff
+Assign an appreciation (e.g., Best Teacher) to a specific staff member.
+
+```bash
+curl -X POST 'http://localhost:5000/api/staff-appreciations' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "staffName": "Miss Priya Sharma",
+    "designation": "Teacher",
+    "department": "Science",
+    "appreciationType": "Best Teacher",
+    "points": 10,
+    "date": "2023-10-02"
+  }'
+```
+
+### Get All Staff Appreciations
+Fetch all appreciations given to staff members. Optionally filter by search (name/department) (e.g., `?search=Priya`).
+
+```bash
+curl -X GET 'http://localhost:5000/api/staff-appreciations?search=' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Staff Appreciation
+Fetch details of a specific staff appreciation by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/staff-appreciations/STAFF_APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Staff Appreciation
+Update an existing staff appreciation record.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/staff-appreciations/STAFF_APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "points": 15
+  }'
+```
+
+### Delete Staff Appreciation
+Delete an existing staff appreciation record.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/staff-appreciations/STAFF_APPRECIATION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Define Infraction
+
+### Create an Infraction
+Define a new infraction type (e.g., Late Coming).
+
+```bash
+curl -X POST 'http://localhost:5000/api/infractions' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Late Coming",
+    "severity": "Minor",
+    "penaltyPoints": 5,
+    "description": "Student/Staff arriving late to school or class."
+  }'
+```
+
+### Get All Infractions
+Fetch all defined infraction types.
+
+```bash
+curl -X GET 'http://localhost:5000/api/infractions' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Infraction
+Fetch details of a specific infraction by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/infractions/INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Infraction
+Update an existing infraction definition.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/infractions/INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "penaltyPoints": 2
+  }'
+```
+
+### Delete Infraction
+Delete an existing infraction definition.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/infractions/INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Define Consequences
+
+### Create a Consequence
+Define a new consequence type (e.g., Verbal Warning).
+
+```bash
+curl -X POST 'http://localhost:5000/api/consequences' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Verbal Warning",
+    "infractionType": "Late Coming",
+    "actionType": "Warning",
+    "description": "Formal verbal warning given to student/staff.",
+    "notifyParent": true
+  }'
+```
+
+### Get All Consequences
+Fetch all defined consequence types.
+
+```bash
+curl -X GET 'http://localhost:5000/api/consequences' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Consequence
+Fetch details of a specific consequence by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/consequences/CONSEQUENCE_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Consequence
+Update an existing consequence definition.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/consequences/CONSEQUENCE_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "notifyParent": false
+  }'
+```
+
+### Delete Consequence
+Delete an existing consequence definition.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/consequences/CONSEQUENCE_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+````
+
+---
+
+## Student Infraction
+
+### Record Student Infraction
+
+Record a new infraction committed by a student.
+
+```bash
+curl -X POST 'http://localhost:5000/api/student-infractions' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "studentName": "Aarav Sharma",
+    "rollNo": "1001",
+    "studentClass": "Class 10",
+    "date": "2023-10-02",
+    "infractionType": "Late Coming",
+    "severity": "Minor",
+    "consequence": "Verbal Warning",
+    "notes": "Arrived 15 mins late."
+  }'
+```
+
+### Get All Student Infractions
+
+Fetch all recorded student infractions. Optionally filter by search (name/rollNo) or class (e.g., `?search=Aarav&studentClass=Class%2010`).
+
+```bash
+curl -X GET 'http://localhost:5000/api/student-infractions?search=&studentClass=All' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Student Infraction
+
+Fetch details of a specific student infraction by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/student-infractions/STUDENT_INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Student Infraction
+
+Update an existing student infraction record.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/student-infractions/STUDENT_INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "notes": "Arrived 20 mins late, warned again."
+  }'
+```
+
+### Delete Student Infraction
+
+Delete an existing student infraction record.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/student-infractions/STUDENT_INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+````
+
+---
+
+## Staff Infraction
+
+### Record Staff Infraction
+Record a new infraction committed by a staff member.
+
+```bash
+curl -X POST 'http://localhost:5000/api/staff-infractions' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "staffName": "Miss Priya Sharma",
+    "designation": "Teacher",
+    "department": "Science",
+    "date": "2023-10-03",
+    "infractionType": "Late Coming",
+    "severity": "Minor",
+    "consequence": "Verbal Warning",
+    "notes": "Arrived late."
+  }'
+```
+
+### Get All Staff Infractions
+Fetch all recorded staff infractions. Optionally filter by search (name/department) (e.g., `?search=Priya`).
+
+```bash
+curl -X GET 'http://localhost:5000/api/staff-infractions?search=' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Get Single Staff Infraction
+Fetch details of a specific staff infraction by ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/staff-infractions/STAFF_INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+### Update Staff Infraction
+Update an existing staff infraction record.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/staff-infractions/STAFF_INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "notes": "Arrived late again, written warning given."
+  }'
+```
+
+### Delete Staff Infraction
+Delete an existing staff infraction record.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/staff-infractions/STAFF_INFRACTION_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## Infraction Report
+
+### Get Infraction Report
+Fetch the infraction report combining both Student and Staff infractions. Supports filtering by type, date range, and search keyword. Also returns summary statistics.
+
+```bash
+# Get All Records
+curl -X GET 'http://localhost:5000/api/reports/infractions?type=All' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+
+# Get Records with Date Filter and Search
+curl -X GET 'http://localhost:5000/api/reports/infractions?type=Student&fromDate=2023-10-01&toDate=2023-10-31&search=Aarav' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```
+
+---
+
+## My Infraction Records
+
+### Get My Infraction Records
+Fetch personal infraction records and accumulated penalty points for a specific student or staff member.
+
+```bash
+# Get Records for a Student
+curl -X GET 'http://localhost:5000/api/reports/my-infractions?role=Student&name=Aarav%20Sharma' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+
+# Get Records for a Staff Member
+curl -X GET 'http://localhost:5000/api/reports/my-infractions?role=Staff&name=Miss%20Priya%20Sharma' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json"
+```

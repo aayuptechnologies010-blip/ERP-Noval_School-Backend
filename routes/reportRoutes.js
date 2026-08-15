@@ -3,7 +3,10 @@ const router = express.Router();
 const {
   getBirthdays,
   getBirthdayChart,
-  getTodaysBirthdays
+  getTodaysBirthdays,
+  getAppreciationReport,
+  getInfractionReport,
+  getMyInfractions
 } = require('../controllers/reportController');
 const { protect } = require('../middlewares/authMiddleware');
 
@@ -14,5 +17,8 @@ router.use(protect);
 router.get('/birthdays/chart', getBirthdayChart);
 router.get('/birthdays/today', getTodaysBirthdays);
 router.get('/birthdays', getBirthdays);
+router.get('/appreciations', getAppreciationReport);
+router.get('/infractions', getInfractionReport);
+router.get('/my-infractions', getMyInfractions);
 
 module.exports = router;
