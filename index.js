@@ -50,6 +50,7 @@ app.use('/api/leave-requests', require('./routes/leaveRequestRoutes'));
 app.use('/api/staff-leaves', require('./routes/staffLeaveRoutes'));
 app.use('/api/staff-attendance', require('./routes/staffAttendanceRoutes'));
 app.use('/api/assignments', require('./routes/assignmentRoutes'));
+app.use('/api/lesson-plans', require('./routes/lessonPlanRoutes'));
 app.use('/api/timetables', require('./routes/timetableRoutes'));
 app.use('/api/promotions', require('./routes/promotionRoutes'));
 app.use('/api/syllabus', require('./routes/syllabusRoutes'));
@@ -79,6 +80,7 @@ app.use('/api/infractions', require('./routes/infractionRoutes'));
 app.use('/api/consequences', require('./routes/consequenceRoutes'));
 app.use('/api/student-infractions', require('./routes/studentInfractionRoutes'));
 app.use('/api/staff-infractions', require('./routes/staffInfractionRoutes'));
+app.use('/api/question-papers', require('./routes/questionPaperRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

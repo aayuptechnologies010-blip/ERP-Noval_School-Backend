@@ -3976,8 +3976,237 @@ curl -X GET 'http://localhost:5000/api/reports/my-infractions?role=Student&name=
   -H "Authorization: Bearer YOUR_TOKEN_HERE" \
   -H "Content-Type: application/json"
 
-# Get Records for a Staff Member
+#
 curl -X GET 'http://localhost:5000/api/reports/my-infractions?role=Staff&name=Miss%20Priya%20Sharma' \
   -H "Authorization: Bearer YOUR_TOKEN_HERE" \
   -H "Content-Type: application/json"
+```
+
+---
+
+## Lesson Planning
+
+### 1. Create a Lesson Plan
+Create a new lesson plan with topic, subject, class, date, duration, status, and notes.
+
+```bash
+curl -X POST 'http://localhost:5000/api/lesson-plans' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "topic": "Introduction to Photosynthesis",
+    "subject": "Science",
+    "class": "Class 7",
+    "duration": "2 Hours",
+    "date": "2023-10-10T00:00:00.000Z",
+    "status": "Completed",
+    "notes": "Explained light and dark reactions."
+  }'
+```
+
+### 2. Get All Lesson Plans
+Fetch all lesson plans.
+
+```bash
+curl -X GET 'http://localhost:5000/api/lesson-plans' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 3. Get a Lesson Plan by ID
+Fetch a single lesson plan using its ID.
+
+```bash
+curl -X GET 'http://localhost:5000/api/lesson-plans/YOUR_LESSON_PLAN_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 4. Update a Lesson Plan
+Update details of an existing lesson plan by its ID.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/lesson-plans/YOUR_LESSON_PLAN_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "Completed",
+    "notes": "Completed the chapter successfully."
+  }'
+```
+
+### 5. Delete a Lesson Plan
+Delete an existing lesson plan by its ID.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/lesson-plans/YOUR_LESSON_PLAN_ID_HERE' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+---
+
+## Attendance Report
+
+### 1. Get Attendance Report Dashboard Data
+Fetch data for the attendance report dashboard including summary cards (Total, Present %, Absent %, Leave %), Monthly Attendance Analysis chart, and Class-wise Present vs Absent chart.
+
+```bash
+# Get Attendance Report for Students (All Classes)
+curl -X GET 'http://localhost:5000/api/reports/attendance?type=Student&className=All%20Classes&date=2026-08-17' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Get Attendance Report for Students in a specific class
+curl -X GET 'http://localhost:5000/api/reports/attendance?type=Student&className=Class%206&date=2026-08-17' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Get Attendance Report for Staff
+curl -X GET 'http://localhost:5000/api/reports/attendance?type=Staff&date=2026-08-17' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 2. Get Average Attendance Analysis
+Fetch data for the "Average Attendance Analysis" report including the Month-wise Trend Chart, Class-wise Summary Table, and Comparative Radar Chart.
+
+```bash
+# Get Average Attendance Analysis (defaults to last 6 months)
+curl -X GET 'http://localhost:5000/api/reports/average-attendance' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Get Average Attendance Analysis with specific month range
+curl -X GET 'http://localhost:5000/api/reports/average-attendance?fromMonth=2026-04&toMonth=2026-08' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+---
+
+## Teachers' Workload
+
+### 1. Get Teachers' Workload Report
+Fetch the overall workload statistics for all teachers based on the active timetables.
+Includes summary stats, bar chart data (assigned vs overload), pie chart data (distribution %), and table data.
+
+```bash
+# Get Teachers Workload (with optional month query parameter)
+curl -X GET 'http://localhost:5000/api/reports/teachers-workload?month=August%202026' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+---
+
+## Conversation Report
+
+### 1. Get Conversation Report
+Fetch the conversation report including summary stats, donut chart (Status Breakdown), bar chart (Weekly Activity Trend), and the list of conversations with their status. 
+
+```bash
+# Get Conversation Report (all)
+curl -X GET 'http://localhost:5000/api/reports/conversations' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Get Conversation Report (with search and status filters)
+curl -X GET 'http://localhost:5000/api/reports/conversations?status=Resolved&search=Kavita' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+---
+
+## Birthday Report
+
+### 1. Get Today's Birthdays
+Fetch the list of students and staff who have their birthday today. Useful for the top highlight banner.
+
+```bash
+curl -X GET 'http://localhost:5000/api/reports/birthdays/today' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 2. Get Month-wise Birthday Chart
+Fetch the aggregate count of birthdays per month across the year to plot the bar chart.
+
+```bash
+curl -X GET 'http://localhost:5000/api/reports/birthdays/chart' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 3. Get Birthday List (Filtered)
+Fetch the detailed list of birthdays for the data table. Supports filtering by type, month, and searching by name.
+
+```bash
+# Get all birthdays for a specific month (e.g., August = 8)
+curl -X GET 'http://localhost:5000/api/reports/birthdays?month=8' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Get birthdays with specific filters (Type = Student, Search = Aarav)
+curl -X GET 'http://localhost:5000/api/reports/birthdays?type=Student&search=Aarav' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+---
+
+## Lesson Plan Report
+
+### 1. Get Lesson Plan Report
+Fetch the lesson plan report which includes summary statistics (Total, Completed, In Progress, Pending) and the detailed list of lesson plans. Supports filtering by subject, class, and searching by topic or teacher.
+
+```bash
+# Get all lesson plans report
+curl -X GET 'http://localhost:5000/api/reports/lesson-plans' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Get lesson plans with specific filters (Class = Class 7, Subject = Science)
+curl -X GET 'http://localhost:5000/api/reports/lesson-plans?className=Class%207&subject=Science' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# Search for a topic or teacher
+curl -X GET 'http://localhost:5000/api/reports/lesson-plans?search=Photosynthesis' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+---
+
+## Question Paper
+
+### 1. Create Question Paper
+Create a new question paper with title, subject, class, teacher, marks, duration, date, and status (Published/Draft).
+
+```bash
+curl -X POST 'http://localhost:5000/api/question-papers' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Mid-Term Math Exam",
+    "subject": "Mathematics",
+    "class": "Class 10",
+    "teacher": "Mr. Rajesh Kumar",
+    "totalMarks": 100,
+    "duration": "3 Hours",
+    "date": "2023-10-20",
+    "status": "Published"
+  }'
+```
+
+### 2. Get All Question Papers
+Fetch all question papers along with summary stats (Total Papers, Published, Draft).
+
+```bash
+curl -X GET 'http://localhost:5000/api/question-papers' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 3. Update Question Paper
+Update details of a specific question paper by its ID.
+
+```bash
+curl -X PUT 'http://localhost:5000/api/question-papers/YOUR_QUESTION_PAPER_ID' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "Published"
+  }'
+```
+
+### 4. Delete Question Paper
+Delete a specific question paper.
+
+```bash
+curl -X DELETE 'http://localhost:5000/api/question-papers/YOUR_QUESTION_PAPER_ID' \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```

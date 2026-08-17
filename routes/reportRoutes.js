@@ -6,7 +6,12 @@ const {
   getTodaysBirthdays,
   getAppreciationReport,
   getInfractionReport,
-  getMyInfractions
+  getMyInfractions,
+  getAttendanceReport,
+  getAverageAttendanceAnalysis,
+  getTeachersWorkload,
+  getConversationReport,
+  getLessonPlanReport
 } = require('../controllers/reportController');
 const { protect } = require('../middlewares/authMiddleware');
 
@@ -20,5 +25,18 @@ router.get('/birthdays', getBirthdays);
 router.get('/appreciations', getAppreciationReport);
 router.get('/infractions', getInfractionReport);
 router.get('/my-infractions', getMyInfractions);
+
+// Attendance Report
+router.get('/attendance', getAttendanceReport);
+router.get('/average-attendance', getAverageAttendanceAnalysis);
+
+// Teachers Workload
+router.get('/teachers-workload', getTeachersWorkload);
+
+// Conversation Report
+router.get('/conversations', getConversationReport);
+
+// Lesson Plan Report
+router.get('/lesson-plans', getLessonPlanReport);
 
 module.exports = router;

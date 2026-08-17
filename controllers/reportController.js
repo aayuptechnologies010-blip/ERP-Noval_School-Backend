@@ -385,11 +385,575 @@ const getMyInfractions = async (req, res) => {
   }
 };
 
+const Attendance = require('../models/attendanceModel');
+const StaffAttendance = require('../models/staffAttendanceModel');
+
+// @desc    Get attendance report dashboard data
+// @route   GET /api/reports/attendance
+// @access  Private
+const getAttendanceReport = async (req, res) => {
+  try {
+    const { type, className, date } = req.query; // type: 'Student' or 'Staff', className: 'All Classes' or specific class, date: YYYY-MM-DD
+    
+    const targetDate = date ? new Date(date) : new Date();
+    targetDate.setHours(0, 0, 0, 0);
+    const nextDate = new Date(targetDate);
+    nextDate.setDate(targetDate.getDate() + 1);
+
+    // 1. Summary Cards
+    let totalCount = 0;
+    let presentCount = 0;
+    let absentCount = 0;
+    let leaveCount = 0;
+
+    if (type === 'Student' || !type) {
+      let studentQuery = {};
+      if (className && className !== 'All Classes') {
+        studentQuery['academicDetails.class'] = className;
+      }
+      totalCount = await Student.countDocuments(studentQuery);
+
+      let attQuery = { date: { $gte: targetDate, $lt: nextDate } };
+      if (className && className !== 'All Classes') {
+        attQuery.class = className;
+      }
+      const attendance = await Attendance.find(attQuery);
+      
+      attendance.forEach(a => {
+        if (a.status === 'Present' || a.status === 'HalfDay' || a.status === 'Late') presentCount++;
+        else if (a.status === 'Absent') absentCount++;
+        else if (a.status === 'Leave') leaveCount++;
+      });
+    } else if (type === 'Staff') {
+      totalCount = await Staff.countDocuments({});
+      const attendance = await StaffAttendance.find({ date: { $gte: targetDate, $lt: nextDate } });
+      
+      attendance.forEach(a => {
+        if (a.status === 'Present' || a.status === 'HalfDay' || a.status === 'Late') presentCount++;
+        else if (a.status === 'Absent') absentCount++;
+        else if (a.status === 'Leave') leaveCount++;
+      });
+    }
+
+    const presentPercentage = totalCount ? ((presentCount / totalCount) * 100).toFixed(1) : 0;
+    const absentPercentage = totalCount ? ((absentCount / totalCount) * 100).toFixed(1) : 0;
+    const leavePercentage = totalCount ? ((leaveCount / totalCount) * 100).toFixed(1) : 0;
+
+    // 2. Monthly Chart (Last 5 months)
+    const monthlyChart = [];
+    const monthsStr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    for (let i = 4; i >= 0; i--) {
+      const d = new Date(targetDate);
+      d.setMonth(d.getMonth() - i);
+      const startOfMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+      const endOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+
+      // Student Monthly
+      const studentMonthAtt = await Attendance.find({ date: { $gte: startOfMonth, $lte: endOfMonth } });
+      let studentPres = 0;
+      studentMonthAtt.forEach(a => { if (['Present', 'HalfDay', 'Late'].includes(a.status)) studentPres++; });
+      const studentPerc = studentMonthAtt.length ? ((studentPres / studentMonthAtt.length) * 100).toFixed(1) : 0;
+
+      // Staff Monthly
+      const staffMonthAtt = await StaffAttendance.find({ date: { $gte: startOfMonth, $lte: endOfMonth } });
+      let staffPres = 0;
+      staffMonthAtt.forEach(a => { if (['Present', 'HalfDay', 'Late'].includes(a.status)) staffPres++; });
+      const staffPerc = staffMonthAtt.length ? ((staffPres / staffMonthAtt.length) * 100).toFixed(1) : 0;
+
+      monthlyChart.push({
+        month: monthsStr[d.getMonth()],
+        studentPercentage: parseFloat(studentPerc),
+        staffPercentage: parseFloat(staffPerc)
+      });
+    }
+
+    // 3. Class-wise Chart (Only if type is Student)
+    const classWiseChart = [];
+    if (type === 'Student' || !type) {
+      const classAtt = await Attendance.aggregate([
+        { $match: { date: { $gte: targetDate, $lt: nextDate } } },
+        {
+          $group: {
+            _id: '$class',
+            total: { $sum: 1 },
+            present: { $sum: { $cond: [{ $in: ['$status', ['Present', 'HalfDay', 'Late']] }, 1, 0] } },
+            absent: { $sum: { $cond: [{ $eq: ['$status', 'Absent'] }, 1, 0] } }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+
+      classAtt.forEach(c => {
+        classWiseChart.push({
+          className: c._id,
+          presentPercentage: c.total ? parseFloat(((c.present / c.total) * 100).toFixed(1)) : 0,
+          absentPercentage: c.total ? parseFloat(((c.absent / c.total) * 100).toFixed(1)) : 0
+        });
+      });
+    }
+
+    res.json({
+      summary: {
+        totalCount,
+        presentCount,
+        presentPercentage: parseFloat(presentPercentage),
+        absentCount,
+        absentPercentage: parseFloat(absentPercentage),
+        leaveCount,
+        leavePercentage: parseFloat(leavePercentage)
+      },
+      monthlyChart,
+      classWiseChart
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get average attendance analysis report
+// @route   GET /api/reports/average-attendance
+// @access  Private
+const getAverageAttendanceAnalysis = async (req, res) => {
+  try {
+    const { fromMonth, toMonth } = req.query; // format: 'YYYY-MM'
+    
+    // Default to last 6 months if not provided
+    let startDate, endDate;
+    if (fromMonth && toMonth) {
+      startDate = new Date(`${fromMonth}-01T00:00:00.000Z`);
+      const [year, month] = toMonth.split('-');
+      endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999)); // last day of toMonth
+    } else {
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 5);
+      startDate.setDate(1);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    // 1. Get all students and group by class for counts
+    const students = await Student.find({}).select('academicDetails.class');
+    const classStudentCounts = {};
+    students.forEach(s => {
+      const className = s.academicDetails?.class;
+      if (className) {
+        classStudentCounts[className] = (classStudentCounts[className] || 0) + 1;
+      }
+    });
+
+    const classes = Object.keys(classStudentCounts).sort();
+
+    // 2. Fetch all attendance in the date range
+    const attendanceRecords = await Attendance.find({
+      date: { $gte: startDate, $lte: endDate }
+    });
+
+    // 3. Process Trend Chart (Month-wise)
+    const monthsStr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthWiseData = {};
+    const classDailyData = {}; // For calculating highest/lowest
+
+    attendanceRecords.forEach(att => {
+      const monthName = monthsStr[att.date.getMonth()];
+      const className = att.class;
+      const dateStr = att.date.toISOString().split('T')[0];
+
+      // Trend data init
+      if (!monthWiseData[monthName]) monthWiseData[monthName] = {};
+      if (!monthWiseData[monthName][className]) monthWiseData[monthName][className] = { present: 0, total: 0 };
+      
+      // Daily data init (for highest/lowest)
+      if (!classDailyData[className]) classDailyData[className] = {};
+      if (!classDailyData[className][dateStr]) classDailyData[className][dateStr] = { present: 0, total: 0 };
+
+      // Count
+      monthWiseData[monthName][className].total++;
+      classDailyData[className][dateStr].total++;
+      if (['Present', 'HalfDay', 'Late'].includes(att.status)) {
+        monthWiseData[monthName][className].present++;
+        classDailyData[className][dateStr].present++;
+      }
+    });
+
+    // Format Trend Chart
+    const trendChart = [];
+    let curr = new Date(startDate);
+    // Add 12:00 to avoid timezone issues when moving months
+    curr.setHours(12, 0, 0, 0); 
+    while (curr <= endDate || (curr.getMonth() === endDate.getMonth() && curr.getFullYear() === endDate.getFullYear())) {
+      const mName = monthsStr[curr.getMonth()];
+      if (!trendChart.find(t => t.month === mName)) {
+        const monthEntry = { month: mName };
+        classes.forEach(cls => {
+          const mData = monthWiseData[mName]?.[cls];
+          monthEntry[cls] = mData && mData.total > 0 ? parseFloat(((mData.present / mData.total) * 100).toFixed(1)) : null;
+        });
+        trendChart.push(monthEntry);
+      }
+      curr.setMonth(curr.getMonth() + 1);
+    }
+
+    // 4. Process Class-wise Summary & Radar
+    const classSummary = [];
+    const radarChart = [];
+
+    classes.forEach(cls => {
+      const studentsCount = classStudentCounts[cls];
+      
+      let totalPresent = 0;
+      let totalRecords = 0;
+      let highest = 0;
+      let lowest = 100;
+      let hasData = false;
+
+      const dailyData = classDailyData[cls];
+      if (dailyData) {
+        Object.values(dailyData).forEach(day => {
+          if (day.total > 0) {
+            hasData = true;
+            totalRecords += day.total;
+            totalPresent += day.present;
+            const dayPerc = (day.present / day.total) * 100;
+            if (dayPerc > highest) highest = dayPerc;
+            if (dayPerc < lowest) lowest = dayPerc;
+          }
+        });
+      }
+
+      if (!hasData) lowest = 0; // reset if no data
+
+      const avgPercentage = totalRecords > 0 ? parseFloat(((totalPresent / totalRecords) * 100).toFixed(1)) : 0;
+      highest = parseFloat(highest.toFixed(1));
+      lowest = parseFloat(lowest.toFixed(1));
+
+      classSummary.push({
+        className: cls,
+        studentsCount,
+        avgPercentage,
+        highest,
+        lowest
+      });
+
+      radarChart.push({
+        className: cls,
+        avgPercentage
+      });
+    });
+
+    res.json({
+      trendChart,
+      classSummary,
+      radarChart
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const Timetable = require('../models/timetableModel');
+
+// @desc    Get Teachers Workload report
+// @route   GET /api/reports/teachers-workload
+// @access  Private
+const getTeachersWorkload = async (req, res) => {
+  try {
+    const { month } = req.query; // optional month filter
+
+    // Fetch all timetables and populate teacher details
+    const timetables = await Timetable.find().populate('schedule.periods.teacher', 'title firstName lastName');
+
+    const teacherStats = {};
+
+    timetables.forEach(tt => {
+      tt.schedule.forEach(daySchedule => {
+        daySchedule.periods.forEach(period => {
+          if (!period.isBreak && period.teacher) {
+            const tId = period.teacher._id.toString();
+            if (!teacherStats[tId]) {
+              teacherStats[tId] = {
+                id: tId,
+                name: `${period.teacher.title ? period.teacher.title + ' ' : ''}${period.teacher.firstName} ${period.teacher.lastName}`.trim(),
+                weeklyPeriods: 0,
+                classesHandled: new Set(),
+                subjects: new Set()
+              };
+            }
+            teacherStats[tId].weeklyPeriods++;
+            teacherStats[tId].classesHandled.add(`${tt.class}-${tt.section}`);
+            if (period.subject) {
+              teacherStats[tId].subjects.add(period.subject);
+            }
+          }
+        });
+      });
+    });
+
+    const MAX_PERIODS_PER_MONTH = 90; // Threshold for overload
+    
+    let totalTeachers = 0;
+    let totalPeriodsAssigned = 0;
+    let overloadedTeachersCount = 0;
+
+    const tableData = [];
+    const periodsPerTeacherChart = [];
+    const workloadDistribution = [];
+
+    Object.values(teacherStats).forEach(stat => {
+      totalTeachers++;
+      const monthlyPeriods = stat.weeklyPeriods * 4; // approximate month
+      totalPeriodsAssigned += monthlyPeriods;
+
+      const overload = Math.max(0, monthlyPeriods - MAX_PERIODS_PER_MONTH);
+      if (overload > 0) {
+        overloadedTeachersCount++;
+      }
+
+      // Format subjects (take the first one or join)
+      const subjectArr = Array.from(stat.subjects);
+      const mainSubject = subjectArr.length > 0 ? subjectArr[0] : 'General';
+
+      tableData.push({
+        id: stat.id,
+        teacherName: stat.name,
+        subject: mainSubject,
+        classesHandled: stat.classesHandled.size,
+        periods: monthlyPeriods,
+        overloadPeriods: overload,
+        status: overload > 0 ? 'Overloaded' : 'Normal'
+      });
+
+      // Using short name for charts (firstName)
+      const shortName = stat.name.split(' ').pop() || stat.name;
+
+      periodsPerTeacherChart.push({
+        teacher: shortName,
+        assignedPeriods: monthlyPeriods,
+        overload: overload
+      });
+    });
+
+    // Calculate Workload Distribution (Pie Chart) %
+    tableData.forEach(td => {
+      const shortName = td.teacherName.split(' ').pop() || td.teacherName;
+      const percentage = totalPeriodsAssigned > 0 ? Math.round((td.periods / totalPeriodsAssigned) * 100) : 0;
+      workloadDistribution.push({
+        name: shortName,
+        value: percentage
+      });
+    });
+
+    const avgPeriodsPerTeacher = totalTeachers > 0 ? Math.round(totalPeriodsAssigned / totalTeachers) : 0;
+
+    res.json({
+      summary: {
+        totalTeachers,
+        totalPeriodsAssigned,
+        avgPeriodsPerTeacher,
+        overloadedTeachers: overloadedTeachersCount
+      },
+      periodsPerTeacherChart,
+      workloadDistribution,
+      tableData
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const Conversation = require('../models/conversationModel');
+
+// @desc    Get Conversation Report Data
+// @route   GET /api/reports/conversations
+// @access  Private
+const getConversationReport = async (req, res) => {
+  try {
+    const { search, status } = req.query;
+
+    let query = {};
+
+    if (search) {
+      query.$or = [
+        { topic: { $regex: search, $options: 'i' } },
+        { sender: { $regex: search, $options: 'i' } },
+        { receiver: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    if (status && status !== 'All') {
+      query.status = status;
+    }
+
+    // Fetch conversations (with filters for table)
+    const tableRecords = await Conversation.find(query).sort({ date: -1 });
+
+    // Fetch all for dashboard stats regardless of the table filters
+    // Or normally, dashboard filters apply to everything. We'll apply filters to everything.
+    const allConversations = await Conversation.find({});
+
+    // 1. Summary Cards
+    const totalThreads = allConversations.length;
+    let resolvedCount = 0;
+    let openCount = 0;
+    let pendingReviewCount = 0;
+
+    allConversations.forEach(c => {
+      if (c.status === 'Resolved') resolvedCount++;
+      else if (c.status === 'Open') openCount++;
+      else if (c.status === 'Pending Review') pendingReviewCount++;
+    });
+
+    const pendingAction = openCount + pendingReviewCount;
+
+    // 2. Status Breakdown
+    const statusBreakdown = [
+      { name: 'Open', value: openCount },
+      { name: 'Pending Review', value: pendingReviewCount },
+      { name: 'Resolved', value: resolvedCount }
+    ];
+
+    // 3. Weekly Activity Trend
+    const weeklyTrend = [];
+    const daysStr = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
+    // Get last 7 days starting from today backwards
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const dayName = daysStr[d.getDay()];
+      
+      const startOfDay = new Date(d);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(d);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      let count = 0;
+      allConversations.forEach(c => {
+        if (c.date >= startOfDay && c.date <= endOfDay) {
+          count++;
+        }
+      });
+
+      weeklyTrend.push({
+        day: dayName,
+        count: count
+      });
+    }
+
+    // Format table records
+    const formattedTableData = tableRecords.map(r => ({
+      id: r._id,
+      topic: r.topic,
+      sender: r.sender,
+      receiver: r.receiver,
+      date: r.date.toISOString().split('T')[0],
+      status: r.status
+    }));
+
+    res.json({
+      summary: {
+        totalThreads,
+        resolved: resolvedCount,
+        pendingAction
+      },
+      statusBreakdown,
+      weeklyTrend,
+      tableData: formattedTableData
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const LessonPlan = require('../models/lessonPlanModel');
+
+// @desc    Get Lesson Plan Report Data
+// @route   GET /api/reports/lesson-plans
+// @access  Private
+const getLessonPlanReport = async (req, res) => {
+  try {
+    const { search, subject, className } = req.query;
+
+    let query = {};
+
+    if (subject && subject !== 'All') {
+      query.subject = subject;
+    }
+    if (className && className !== 'All') {
+      query.class = className;
+    }
+
+    const records = await LessonPlan.find(query).populate('createdBy', 'title firstName lastName name').sort({ date: -1 });
+
+    let finalRecords = [];
+    let completed = 0;
+    let inProgress = 0;
+    let pending = 0;
+
+    records.forEach(r => {
+      let teacherName = 'N/A';
+      if (r.createdBy) {
+         if (r.createdBy.firstName) {
+            teacherName = `${r.createdBy.title ? r.createdBy.title + ' ' : ''}${r.createdBy.firstName} ${r.createdBy.lastName || ''}`.trim();
+         } else if (r.createdBy.name) {
+            teacherName = r.createdBy.name;
+         }
+      }
+
+      // Apply search filter (Topic OR Teacher)
+      if (search) {
+        const searchLower = search.toLowerCase();
+        if (!r.topic.toLowerCase().includes(searchLower) && !teacherName.toLowerCase().includes(searchLower)) {
+          return; // Skip this record
+        }
+      }
+
+      if (r.status === 'Completed') completed++;
+      else if (r.status === 'In Progress') inProgress++;
+      else if (r.status === 'Pending') pending++;
+
+      finalRecords.push({
+        id: r._id,
+        topic: r.topic,
+        subject: r.subject,
+        teacher: teacherName,
+        class: r.class,
+        duration: r.duration,
+        date: r.date.toISOString().split('T')[0],
+        status: r.status
+      });
+    });
+
+    res.json({
+      summary: {
+        totalPlans: finalRecords.length,
+        completed,
+        inProgress,
+        pending
+      },
+      records: finalRecords
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getBirthdays,
   getBirthdayChart,
   getTodaysBirthdays,
   getAppreciationReport,
   getInfractionReport,
-  getMyInfractions
+  getMyInfractions,
+  getAttendanceReport,
+  getAverageAttendanceAnalysis,
+  getTeachersWorkload,
+  getConversationReport,
+  getLessonPlanReport
 };
