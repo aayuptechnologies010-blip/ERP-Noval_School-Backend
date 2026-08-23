@@ -43,6 +43,11 @@ const createStaff = async (req, res) => {
       return res.status(400).json({ message: 'Staff with this User Name (ID) already exists' });
     }
 
+    // Set a default password if not provided
+    if (!staffData.password) {
+      staffData.password = staffData.userName + '@123'; // Default password
+    }
+
     const staff = new Staff(staffData);
 
     // Attach profile photo if uploaded

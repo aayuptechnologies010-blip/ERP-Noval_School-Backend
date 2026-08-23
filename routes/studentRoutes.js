@@ -11,10 +11,14 @@ const {
   bulkUpdateRollNumbers,
   bulkUpdateHouseNames,
   bulkUpdatePhotos,
-  bulkUpdateClubs
+  bulkUpdateClubs,
+  uploadStudentDocument,
+  verifyStudentDocument,
+  allotClassAndSection,
+  generateTC
 } = require('../controllers/studentController');
 const { protect } = require('../middlewares/authMiddleware');
-const { uploadMultiple, uploadAny } = require('../middlewares/uploadMiddleware');
+const { uploadMultiple, uploadAny, uploadDocument } = require('../middlewares/uploadMiddleware');
 
 // Protect all routes
 router.use(protect);
@@ -45,5 +49,11 @@ router.route('/:id')
 
 router.route('/:id/favorite')
   .patch(toggleStudentFavorite);
+
+// Post-Admission workflows
+router.post('/:id/documents', uploadDocument.array('documents', 10), uploadStudentDocument);
+router.patch('/:id/documents/:docId/verify', verifyStudentDocument);
+router.patch('/:id/allotment', allotClassAndSection);
+router.patch('/:id/generate-tc', generateTC);
 
 module.exports = router;

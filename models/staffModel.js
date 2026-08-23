@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const staffSchema = new mongoose.Schema({
   // Basic Info
@@ -9,6 +10,7 @@ const staffSchema = new mongoose.Schema({
   
   // Professional Info
   userName: { type: String, required: true, unique: true }, // e.g., SF066
+  password: { type: String, required: true, select: false },
   role: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Role', 
@@ -60,6 +62,20 @@ const staffSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Encrypt password before saving
+staffSchema.pre('save', async function() {
+  if (!this.isModified('password')) {
+    return;
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Match user entered password to hashed password in database
+staffSchema.methods.matchPassword = async function(enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const Staff = mongoose.model('Staff', staffSchema);
 

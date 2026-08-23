@@ -1,10 +1,11 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Admin = require('../models/adminModel');
+const Staff = require('../models/staffModel');
 
 // Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, userType) => {
+  return jwt.sign({ id, userType }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '30d',
   });
 };
@@ -48,7 +49,8 @@ const registerAdmin = async (req, res) => {
         lastName: admin.lastName,
         userId: admin.userId,
         email: admin.email,
-        token: generateToken(admin._id),
+        userType: 'admin',
+        token: generateToken(admin._id, 'admin'),
       });
     } else {
       res.status(400).json({ message: 'Invalid admin data' });
@@ -58,29 +60,48 @@ const registerAdmin = async (req, res) => {
   }
 };
 
-// @desc    Authenticate an admin
+// @desc    Auth user & get token (Unified Login for Admin and Staff)
 // @route   POST /api/admin/login
 // @access  Public
 const loginAdmin = async (req, res) => {
   try {
     const { userId, password } = req.body;
 
-    // Check for user userId
+    // 1. Check for user in Admin collection
     const admin = await Admin.findOne({ userId }).select('+password');
 
     if (admin && (await admin.matchPassword(password))) {
-      res.json({
+      return res.json({
         _id: admin.id,
         firstName: admin.firstName,
         lastName: admin.lastName,
         userId: admin.userId,
         email: admin.email,
         profileImage: admin.profileImage,
-        token: generateToken(admin._id),
+        userType: 'admin',
+        token: generateToken(admin._id, 'admin'),
       });
-    } else {
-      res.status(401).json({ message: 'Invalid credentials' });
     }
+
+    // 2. Check for user in Staff collection
+    const staff = await Staff.findOne({ userName: userId }).select('+password').populate('role', 'roleName');
+
+    if (staff && (await staff.matchPassword(password))) {
+      return res.json({
+        _id: staff.id,
+        firstName: staff.firstName,
+        lastName: staff.lastName,
+        userId: staff.userName,
+        email: staff.emailId,
+        profileImage: staff.staffPhoto,
+        userType: 'staff',
+        role: staff.role,
+        token: generateToken(staff._id, 'staff'),
+      });
+    }
+
+    // If neither matched
+    res.status(401).json({ message: 'Invalid credentials' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

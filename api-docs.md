@@ -18,15 +18,15 @@ curl -X POST http://localhost:5000/api/admin/register \
   }'
 ```
 
-## 2. Login Admin
+## 2. Unified Login (Admin & Staff)
 
-Login to get the JWT token.
+Login to get the JWT token. The backend automatically determines if the provided `userId` belongs to an Admin or a Staff member.
 
 ```bash
 curl -X POST http://localhost:5000/api/admin/login \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "admin123",
+    "userId": "admin123",  # For staff, use their userName (e.g., "SF066")
     "password": "password123"
   }'
 ```
@@ -4209,4 +4209,368 @@ Delete a specific question paper.
 ```bash
 curl -X DELETE 'http://localhost:5000/api/question-papers/YOUR_QUESTION_PAPER_ID' \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+
+## 15. New Admission Entry (Student Registration)
+
+This API handles the creation of a new student admission with all advanced details.
+
+### 15.1 Create New Admission (POST /api/students)
+Since this API supports file uploads (studentPhoto, fatherPhoto, motherPhoto, familyPhoto), it must be sent as `multipart/form-data`. The JSON data should be sent as a stringified object in the `data` field.
+
+```bash
+curl -X POST http://localhost:5000/api/students \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -F "studentPhoto=@/path/to/student.jpg" \
+  -F "fatherPhoto=@/path/to/father.jpg" \
+  -F "motherPhoto=@/path/to/mother.jpg" \
+  -F "familyPhoto=@/path/to/family.jpg" \
+  -F "data={
+  \"personalDetails\": {
+    \"firstName\": \"Rahul\",
+    \"middleName\": \"Kumar\",
+    \"lastName\": \"Sharma\",
+    \"dateOfBirth\": \"2015-05-14T00:00:00.000Z\",
+    \"gender\": \"Male\",
+    \"religion\": \"Hindu\",
+    \"caste\": \"General\",
+    \"subCaste\": \"Brahmin\",
+    \"nationality\": \"Indian\",
+    \"placeOfBirth\": \"Delhi\",
+    \"motherTongue\": \"Hindi\",
+    \"parish\": \"\",
+    \"schoolCategory\": \"Day Scholar\",
+    \"houseNames\": \"Red House\",
+    \"isNachEcs\": false,
+    \"isEwsCwsn\": \"No\",
+    \"isMinority\": false,
+    \"isDisabilityCwsn\": false,
+    \"disabilityDescription\": \"\",
+    \"isRte\": \"No\",
+    \"clubs\": \"Science Club\",
+    \"cadetType\": \"NCC\",
+    \"statesNationalCompetitions\": \"\",
+    \"foodStatus\": \"Veg\",
+    \"boardingHostel\": \"No\",
+    \"isOnlyChild\": false
+  },
+  \"academicDetails\": {
+    \"admissionNumber\": \"ADM2026001\",
+    \"admissionStatus\": \"Continuous\",
+    \"currentStatus\": \"STUDYING\",
+    \"reason\": \"\",
+    \"rollNumber\": \"101\",
+    \"class\": \"Class 6\",
+    \"section\": \"A\",
+    \"board\": \"CBSE\",
+    \"dateOfAdmission\": \"2026-04-01T00:00:00.000Z\",
+    \"dateOfJoining\": \"2026-04-05T00:00:00.000Z\",
+    \"stream\": \"General\",
+    \"optionalSubject\": \"Computer Science\",
+    \"previousClass\": \"Class 5\",
+    \"sixSubject\": \"\"
+  },
+  \"uniqueIds\": {
+    \"udiseNumber\": \"UDISE12345\",
+    \"pen\": \"PEN98765\",
+    \"apaarId\": \"APAAR111222\",
+    \"ePunjabNumber\": \"EP1234\",
+    \"feesNumber\": \"FEE001\",
+    \"saralNumber\": \"SRL999\",
+    \"srnNumber\": \"SRN555\",
+    \"issen\": false,
+    \"abhaNumber\": \"ABHA777\",
+    \"billGrNumber\": \"GR123\",
+    \"studentNumber\": \"STU001\",
+    \"rfidCardNumber\": \"RFID001\"
+  },
+  \"contactAddress\": {
+    \"contactNumber\": \"9876543210\",
+    \"secondaryContactNo\": \"9876543211\",
+    \"studentEmail\": \"rahul@example.com\",
+    \"currentAddress\": \"123, Main Street\",
+    \"pinCode\": \"110001\",
+    \"city\": \"New Delhi\",
+    \"state\": \"Delhi\",
+    \"permanentAddress\": \"123, Main Street\",
+    \"permanentPinCode\": \"110001\",
+    \"permanentCity\": \"New Delhi\",
+    \"permanentState\": \"Delhi\",
+    \"domicileState\": \"Delhi\"
+  },
+  \"familyDetails\": {
+    \"familyId\": \"FAM101\",
+    \"parentStatus\": \"Together\",
+    \"staffName\": \"\",
+    \"father\": {
+      \"title\": \"Mr.\",
+      \"firstName\": \"Rajesh\",
+      \"middleName\": \"\",
+      \"lastName\": \"Sharma\",
+      \"aadharNumber\": \"123412341234\",
+      \"panNumber\": \"ABCDE1234F\",
+      \"annualIncome\": \"500000\",
+      \"dob\": \"1980-01-01T00:00:00.000Z\",
+      \"mobile\": \"9876543210\",
+      \"phone\": \"0112345678\",
+      \"email\": \"rajesh@example.com\",
+      \"residenceAddress\": \"123, Main Street, Delhi\",
+      \"qualification\": \"B.Tech\",
+      \"profession\": \"Engineer\",
+      \"professionDetails\": \"Software Engineer\",
+      \"designation\": \"Manager\",
+      \"designationDetails\": \"IT Manager\",
+      \"companyName\": \"Tech Corp\",
+      \"businessDetails\": \"\",
+      \"serviceIn\": \"Private\",
+      \"officeAddress\": \"Connaught Place, Delhi\",
+      \"officePhone\": \"0119876543\",
+      \"officeMobile\": \"\",
+      \"officeExtension\": \"123\",
+      \"officeEmail\": \"rajesh.office@example.com\",
+      \"officeWebsite\": \"www.techcorp.com\",
+      \"isAlumni\": \"No\",
+      \"batchYear\": \"\"
+    },
+    \"mother\": {
+      \"title\": \"Mrs.\",
+      \"firstName\": \"Sunita\",
+      \"middleName\": \"\",
+      \"lastName\": \"Sharma\",
+      \"aadharNumber\": \"432143214321\",
+      \"panNumber\": \"VWXYZ9876Q\",
+      \"annualIncome\": \"300000\",
+      \"dob\": \"1985-05-05T00:00:00.000Z\",
+      \"mobile\": \"9876543211\",
+      \"phone\": \"\",
+      \"email\": \"sunita@example.com\",
+      \"residenceAddress\": \"123, Main Street, Delhi\",
+      \"qualification\": \"M.A.\",
+      \"profession\": \"Teacher\",
+      \"professionDetails\": \"High School Teacher\",
+      \"designation\": \"TGT\",
+      \"designationDetails\": \"\",
+      \"companyName\": \"Govt School\",
+      \"businessDetails\": \"\",
+      \"serviceIn\": \"Government\",
+      \"officeAddress\": \"Delhi\",
+      \"officePhone\": \"\",
+      \"officeMobile\": \"\",
+      \"officeExtension\": \"\",
+      \"officeEmail\": \"\",
+      \"officeWebsite\": \"\",
+      \"isAlumni\": \"No\",
+      \"batchYear\": \"\",
+      \"anniversaryDate\": \"2010-02-15T00:00:00.000Z\"
+    }
+  },
+  \"guardianDetails\": {
+    \"title\": \"Mr.\",
+    \"name\": \"Suresh Sharma\",
+    \"dob\": \"1975-08-20T00:00:00.000Z\",
+    \"income\": \"400000\",
+    \"relationship\": \"Uncle\",
+    \"mobile\": \"9988776655\",
+    \"phone\": \"\",
+    \"email\": \"suresh@example.com\",
+    \"residenceAddress\": \"456, Side Street, Delhi\",
+    \"qualification\": \"B.Com\",
+    \"profession\": \"Business\",
+    \"professionDetails\": \"Retail Shop\",
+    \"designation\": \"Owner\",
+    \"companyName\": \"Sharma Traders\",
+    \"businessDetails\": \"General Store\",
+    \"serviceIn\": \"Self Employed\",
+    \"officeAddress\": \"Local Market, Delhi\",
+    \"officePhone\": \"\",
+    \"officeMobile\": \"\",
+    \"officeExtension\": \"\",
+    \"officeEmail\": \"\",
+    \"officeWebsite\": \"\",
+    \"secondaryGuardianName\": \"\",
+    \"secondaryGuardianMobile\": \"\",
+    \"secondaryGuardianRelationship\": \"\"
+  },
+  \"emergencyContacts\": [
+    {
+      \"name\": \"Ramesh Sharma\",
+      \"smsNumber\": \"9988776655\",
+      \"email\": \"ramesh@example.com\",
+      \"mobileNumber\": \"9988776655\",
+      \"phoneNumber\": \"\",
+      \"address\": \"456, Side Street, Delhi\",
+      \"relation\": \"Uncle\"
+    }
+  ],
+  \"isFavorite\": false
+}"
+```
+
+### 15.2 Get All Admitted Students (GET /api/students)
+Retrieve a list of all students (with optional query parameters like `?class=Class 6&section=A`).
+
+```bash
+curl -X GET "http://localhost:5000/api/students?class=Class%206&section=A" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 15.3 Get Student Details by ID (GET /api/students/:id)
+Retrieve full details of a specific student.
+
+```bash
+curl -X GET "http://localhost:5000/api/students/66123abc456def7890gh1234" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### 15.4 Update Student Admission (PUT /api/students/:id)
+Updates an existing student's data. Supports partial updates via the flattened update controller, and can also upload new photos.
+
+```bash
+curl -X PUT http://localhost:5000/api/students/66123abc456def7890gh1234 \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -F "data={
+  \"academicDetails\": {
+    \"currentStatus\": \"LEFT\"
+  }
+}"
+```
+
+
+## 16. Role-Wise Staff Complete Lifecycle
+
+This section covers the end-to-end flow of managing role-wise staff users: Creating roles, adding staff, logging in, managing profile, updating status, and deletion.
+
+### 16.1 Create Role (Admin only)
+Create a new role (e.g., Teacher, Accountant).
+
+```bash
+curl -X POST http://localhost:5000/api/roles \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "roleName": "Teacher",
+    "description": "Academic Staff"
+  }'
+```
+*(Copy the `_id` from the response to use as `ROLE_ID` in the next step)*
+
+### 16.2 Create Staff User (Admin only)
+Create a staff user and assign them the role.
+
+```bash
+curl -X POST http://localhost:5000/api/staffs \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE" \
+  -F "data={
+  \"firstName\": \"Rahul\",
+  \"lastName\": \"Verma\",
+  \"userName\": \"SF002\",
+  \"password\": \"rahul@123\",
+  \"role\": \"ROLE_ID_HERE\",
+  \"designation\": \"Math Teacher\",
+  \"contactNo\": \"9876543210\",
+  \"emailId\": \"rahul@example.com\"
+}"
+```
+*(Note down the `_id` from the response to use as `STAFF_ID` in future requests)*
+
+### 16.3 Staff Login (Unified Login)
+The staff member logs in using their `userName` as `userId`.
+
+```bash
+curl -X POST http://localhost:5000/api/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "SF002",
+    "password": "rahul@123"
+  }'
+```
+*(Response will contain `token` and `userType: 'staff'`. Use this token as `STAFF_TOKEN_HERE` for staff operations)*
+
+### 16.4 Get Staff Profile (By Staff or Admin)
+Fetch the staff's profile using their ID.
+
+```bash
+curl -X GET http://localhost:5000/api/staffs/STAFF_ID_HERE \
+  -H "Authorization: Bearer STAFF_TOKEN_HERE"
+```
+
+### 16.5 Edit Staff Profile (By Staff or Admin)
+Update details (e.g., phone number or address). Supports partial updates and `staffPhoto` upload.
+
+```bash
+curl -X PUT http://localhost:5000/api/staffs/STAFF_ID_HERE \
+  -H "Authorization: Bearer STAFF_TOKEN_HERE" \
+  -F "data={
+  \"contactNo\": \"9999999999\"
+}"
+```
+
+### 16.6 Toggle Active/Inactive Status (Admin only)
+Admin can suspend or activate a staff member.
+
+```bash
+curl -X PATCH http://localhost:5000/api/staffs/STAFF_ID_HERE/status \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE"
+```
+
+### 16.7 Update Staff Details completely (Admin only)
+Admin updates the staff member's role or designation.
+
+```bash
+curl -X PUT http://localhost:5000/api/staffs/STAFF_ID_HERE \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE" \
+  -F "data={
+  \"designation\": \"Senior Math Teacher\"
+}"
+```
+
+### 16.8 Delete Staff (Admin only)
+Permanently remove a staff user.
+
+```bash
+curl -X DELETE http://localhost:5000/api/staffs/STAFF_ID_HERE \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE"
+```
+
+
+## 17. Post-Admission Workflow (Documents & Allotment)
+
+These APIs manage a student's lifecycle immediately following admission, covering document uploads, verifications, and class/section allotment.
+
+### 17.1 Upload Student Document (POST /api/students/:id/documents)
+Upload a single document (like Aadhar, TC, Birth Certificate) for a specific student.
+
+```bash
+curl -X POST http://localhost:5000/api/students/STUDENT_ID_HERE/documents \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE" \
+  -F "documentName=Aadhar Card" \
+  -F "document=@/path/to/aadhar.pdf"
+```
+*(This will return the `docId` within the `uploadedDocuments` array)*
+
+### 17.2 Verify Student Document (PATCH /api/students/:id/documents/:docId/verify)
+Mark a specific uploaded document as verified. If all documents are verified, the overall `isAdmissionVerified` status becomes true.
+
+```bash
+curl -X PATCH http://localhost:5000/api/students/STUDENT_ID_HERE/documents/DOC_ID_HERE/verify \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "isVerified": true
+  }'
+```
+
+### 17.3 Allot Class and Section (PATCH /api/students/:id/allotment)
+Assign a class, section, and roll number to a newly admitted student.
+
+```bash
+curl -X PATCH http://localhost:5000/api/students/STUDENT_ID_HERE/allotment \
+  -H "Authorization: Bearer ADMIN_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "assignedClass": "10",
+    "assignedSection": "A",
+    "rollNumber": "10A-45"
+  }'
 ```

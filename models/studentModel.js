@@ -196,7 +196,18 @@ const studentSchema = new mongoose.Schema({
   ],
 
   // Custom Status
-  isFavorite: { type: Boolean, default: false }
+  isFavorite: { type: Boolean, default: false },
+
+  // Post-Admission Workflow
+  isAdmissionVerified: { type: Boolean, default: false },
+  uploadedDocuments: [
+    {
+      documentName: { type: String }, // e.g., Aadhar, TC, Birth Certificate
+      documentUrl: { type: String },
+      isVerified: { type: Boolean, default: false },
+      uploadedAt: { type: Date, default: Date.now }
+    }
+  ]
 
 }, {
   timestamps: true

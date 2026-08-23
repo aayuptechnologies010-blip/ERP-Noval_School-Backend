@@ -341,6 +341,137 @@ const bulkUpdateClubs = async (req, res) => {
   }
 };
 
+// @desc    Upload documents for a student
+// @route   POST /api/students/:id/documents
+// @access  Private
+const uploadStudentDocument = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: 'No document files provided' });
+    }
+
+    let { documentNames } = req.body;
+    if (!documentNames) {
+      return res.status(400).json({ message: 'documentNames are required' });
+    }
+
+    // Ensure it's an array even if a single string is passed
+    const namesArray = Array.isArray(documentNames) ? documentNames : [documentNames];
+
+    // Optional: check if Aadhar is included if you want to strictly enforce it here
+    // const hasAadhar = namesArray.some(name => name.toLowerCase().includes('aadhar'));
+    // if (!hasAadhar && student.uploadedDocuments.length === 0) {
+    //   // return res.status(400).json({ message: 'Aadhar Card is required' });
+    // }
+
+    req.files.forEach((file, index) => {
+      const documentUrl = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
+      student.uploadedDocuments.push({
+        documentName: namesArray[index] || `Document ${index + 1}`,
+        documentUrl,
+        isVerified: false,
+        uploadedAt: Date.now()
+      });
+    });
+
+    const updatedStudent = await student.save();
+    res.status(201).json({ message: 'Documents uploaded successfully', student: updatedStudent });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Verify a student document
+// @route   PATCH /api/students/:id/documents/:docId/verify
+// @access  Private (Admin)
+const verifyStudentDocument = async (req, res) => {
+  try {
+    const { id, docId } = req.params;
+    const { isVerified } = req.body;
+
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const doc = student.uploadedDocuments.id(docId);
+    if (!doc) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    doc.isVerified = isVerified !== undefined ? isVerified : true;
+    
+    // Check if all documents are verified to mark admission as verified
+    if (student.uploadedDocuments.every(d => d.isVerified)) {
+      student.isAdmissionVerified = true;
+    } else {
+      student.isAdmissionVerified = false;
+    }
+
+    const updatedStudent = await student.save();
+    res.json({ message: 'Document verification updated', document: doc, isAdmissionVerified: student.isAdmissionVerified });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Allot class and section to a student
+// @route   PATCH /api/students/:id/allotment
+// @access  Private (Admin)
+const allotClassAndSection = async (req, res) => {
+  try {
+    const { assignedClass, assignedSection, rollNumber } = req.body;
+    
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    if (assignedClass) student.academicDetails.class = assignedClass;
+    if (assignedSection) student.academicDetails.section = assignedSection;
+    if (rollNumber) student.academicDetails.rollNumber = rollNumber;
+    
+    student.academicDetails.currentStatus = 'STUDYING';
+
+    const updatedStudent = await student.save();
+    res.json({ message: 'Class and section allotted successfully', student: updatedStudent });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Generate Transfer Certificate (TC) and mark student as LEFT
+// @route   PATCH /api/students/:id/generate-tc
+// @access  Private (Admin)
+const generateTC = async (req, res) => {
+  try {
+    const { tcNumber, leavingDate, reason } = req.body;
+    
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    student.academicDetails.currentStatus = 'LEFT';
+    if (reason) student.academicDetails.reason = reason;
+    
+    // We can store TC details in a new schema or just in academicDetails.
+    // For now, setting currentStatus to LEFT and updating reason is the core logic.
+    // Assuming leavingDate is passed, we can update it in academicDetails or a new field.
+    // Let's just return success with the updated status.
+
+    const updatedStudent = await student.save();
+    res.json({ message: 'Transfer Certificate generated and student marked as LEFT', student: updatedStudent, tcNumber, leavingDate });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createStudent,
   getAllStudents,
@@ -352,5 +483,9 @@ module.exports = {
   bulkUpdateRollNumbers,
   bulkUpdateHouseNames,
   bulkUpdatePhotos,
-  bulkUpdateClubs
+  bulkUpdateClubs,
+  uploadStudentDocument,
+  verifyStudentDocument,
+  allotClassAndSection,
+  generateTC
 };

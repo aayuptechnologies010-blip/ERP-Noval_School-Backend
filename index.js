@@ -20,11 +20,18 @@ const allowedOrigins = [
   'http://localhost:5174',
   'http://localhost:5175',
   'http://localhost:5176',
-  'https://erp-noval-school.vercel.app'
+  'https://erp-noval-school.vercel.app', // Fixed old domain (origin should not contain paths like /login)
+  'https://erp-noval-school-1acey25x7-aayuptechnologies010-blips-projects.vercel.app' // Aapka Naya Vercel Domain
 ].filter(Boolean);
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(helmet({
@@ -81,6 +88,10 @@ app.use('/api/consequences', require('./routes/consequenceRoutes'));
 app.use('/api/student-infractions', require('./routes/studentInfractionRoutes'));
 app.use('/api/staff-infractions', require('./routes/staffInfractionRoutes'));
 app.use('/api/question-papers', require('./routes/questionPaperRoutes'));
+app.use('/api/fees', require('./routes/feeRoutes'));
+app.use('/api/exams', require('./routes/examRoutes'));
+app.use('/api/results', require('./routes/resultRoutes'));
+app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/adminModel');
+const Staff = require('../models/staffModel');
 
 const protect = async (req, res, next) => {
   let token;
@@ -15,11 +16,15 @@ const protect = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from the token
-      req.user = await Admin.findById(decoded.id).select('-password');
+      // Get user from the token based on userType
+      if (decoded.userType === 'staff') {
+        req.user = await Staff.findById(decoded.id).select('-password');
+      } else {
+        req.user = await Admin.findById(decoded.id).select('-password');
+      }
       
       if (!req.user) {
-        return res.status(401).json({ message: 'Not authorized, admin not found' });
+        return res.status(401).json({ message: 'Not authorized, user not found' });
       }
 
       next();
