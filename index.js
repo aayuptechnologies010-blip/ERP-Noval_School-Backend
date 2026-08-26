@@ -92,6 +92,9 @@ app.use('/api/fees', require('./routes/feeRoutes'));
 app.use('/api/exams', require('./routes/examRoutes'));
 app.use('/api/results', require('./routes/resultRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
+app.use('/api/professions', require('./routes/professionRoutes'));
+app.use('/api/academic-years', require('./routes/academicYearRoutes'));
+app.use('/api/financial-years', require('./routes/financialYearRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {
