@@ -95,6 +95,24 @@ app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/professions', require('./routes/professionRoutes'));
 app.use('/api/academic-years', require('./routes/academicYearRoutes'));
 app.use('/api/financial-years', require('./routes/financialYearRoutes'));
+app.use('/api/castes', require('./routes/casteRoutes'));
+app.use('/api/sub-castes', require('./routes/subCasteRoutes'));
+app.use('/api/categories', require('./routes/categoryRoutes'));
+app.use('/api/parishes', require('./routes/parishRoutes'));
+app.use('/api/religions', require('./routes/religionRoutes'));
+app.use('/api/school-classes', require('./routes/schoolClassRoutes'));
+app.use('/api/school-global-details', require('./routes/schoolGlobalDetailsRoutes'));
+app.use('/api/school-boards', require('./routes/schoolBoardRoutes'));
+app.use('/api/school-global-fee-types', require('./routes/schoolGlobalFeeTypeRoutes'));
+app.use('/api/wings', require('./routes/wingRoutes'));
+app.use('/api/sections', require('./routes/sectionRoutes'));
+app.use('/api/class-sections', require('./routes/classSectionRoutes'));
+app.use('/api/houses', require('./routes/houseRoutes'));
+app.use('/api/committees', require('./routes/committeeRoutes'));
+app.use('/api/meeting-details', require('./routes/meetingDetailRoutes'));
+app.use('/api/clubs', require('./routes/clubRoutes'));
+app.use('/api/streams', require('./routes/streamRoutes'));
+app.use('/api/optional-subjects', require('./routes/optionalSubjectRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {
