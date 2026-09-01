@@ -1,4 +1,5 @@
 const Student = require('../models/studentModel');
+const xlsx = require('xlsx');
 
 // Helper to flatten nested objects for partial updates in Mongoose
 const flattenObject = (ob) => {
@@ -472,6 +473,66 @@ const generateTC = async (req, res) => {
   }
 };
 
+// @desc    Import students from Excel
+// @route   POST /api/students/import
+// @access  Private
+const importStudents = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Please upload an excel file' });
+    }
+
+    const { uploadOption } = req.body; // e.g., 'current' or 'multiple'
+    
+    // Read the Excel file
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(sheet);
+
+    if (data.length === 0) {
+      return res.status(400).json({ message: 'Excel file is empty' });
+    }
+
+    // Process data and map to student schema
+    const studentsToInsert = data.map(row => {
+      // Mapping logic: map typical excel headers to student schema
+      return {
+        personalDetails: {
+          firstName: row['First Name'] || row.firstName || 'Unknown',
+          lastName: row['Last Name'] || row.lastName || 'Unknown',
+          dateOfBirth: row['Date Of Birth'] || row.dateOfBirth,
+          gender: row['Gender'] || row.gender,
+        },
+        academicDetails: {
+          admissionNumber: row['Admission Number'] || row.admissionNumber || `ADM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          class: row['Class'] || row.class,
+          section: row['Section'] || row.section,
+        },
+        contactAddress: {
+          contactNumber: row['Mobile'] || row.mobile || row.contactNumber
+        }
+      };
+    });
+
+    const result = await Student.insertMany(studentsToInsert, { ordered: false });
+
+    res.status(200).json({
+      message: `${result.length} students imported successfully`,
+      data: result
+    });
+  } catch (error) {
+    // If it's a bulk insert error, some might have been inserted
+    if (error.code === 11000 || error.name === 'BulkWriteError') {
+       return res.status(200).json({
+          message: 'Import completed with some skipped due to duplicate Admission Numbers.',
+          error: error.message
+       });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createStudent,
   getAllStudents,
@@ -487,5 +548,6 @@ module.exports = {
   uploadStudentDocument,
   verifyStudentDocument,
   allotClassAndSection,
-  generateTC
+  generateTC,
+  importStudents
 };

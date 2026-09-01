@@ -113,6 +113,13 @@ app.use('/api/meeting-details', require('./routes/meetingDetailRoutes'));
 app.use('/api/clubs', require('./routes/clubRoutes'));
 app.use('/api/streams', require('./routes/streamRoutes'));
 app.use('/api/optional-subjects', require('./routes/optionalSubjectRoutes'));
+app.use('/api/parents-statuses', require('./routes/parentsStatusRoutes'));
+app.use('/api/student-classifications', require('./routes/studentClassificationRoutes'));
+app.use('/api/reasons', require('./routes/reasonRoutes'));
+app.use('/api/remarks', require('./routes/remarkRoutes'));
+app.use('/api/session-transfer', require('./routes/sessionTransferRoutes'));
+app.use('/api/global-search-settings', require('./routes/globalSearchSettingRoutes'));
+app.use('/api/change-academic-year', require('./routes/changeAcademicYearRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

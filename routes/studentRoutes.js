@@ -15,10 +15,11 @@ const {
   uploadStudentDocument,
   verifyStudentDocument,
   allotClassAndSection,
-  generateTC
+  generateTC,
+  importStudents
 } = require('../controllers/studentController');
 const { protect } = require('../middlewares/authMiddleware');
-const { uploadMultiple, uploadAny, uploadDocument } = require('../middlewares/uploadMiddleware');
+const { uploadMultiple, uploadAny, uploadDocument, uploadSingle } = require('../middlewares/uploadMiddleware');
 
 // Protect all routes
 router.use(protect);
@@ -26,6 +27,9 @@ router.use(protect);
 router.route('/')
   .post(uploadMultiple, createStudent)
   .get(getAllStudents);
+
+// Import students
+router.post('/import', uploadSingle.single('file'), importStudents);
 
 // Get favorite students (must be before /:id)
 router.get('/favorites', getFavoriteStudents);
