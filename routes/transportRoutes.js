@@ -16,6 +16,7 @@ const {
   getMeterByVehicle, createMeterEntry, deleteMeterEntry,
   getAllReminders, createReminder, updateReminder, deleteReminder,
   assignTransportToStudent, assignSelfTransportBulk, transferStudentsRoute, removeTransportFromStudent, getStudentsByRoute,
+  markAttendance, getAttendance, getTransportStudents, createOutPass, getOutPasses
 } = require('../controllers/transportController');
 
 // Travel Agency
