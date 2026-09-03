@@ -103,7 +103,6 @@ router.get('/students-by-route/:routeId', protect, getStudentsByRoute);
 
 
 
-
 router.post('/attendance/mark', markAttendance);
 router.get('/attendance/view', getAttendance);
 router.get('/students', getTransportStudents);
