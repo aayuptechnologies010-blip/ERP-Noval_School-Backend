@@ -95,6 +95,7 @@ app.use('/api/student-infractions', require('./routes/studentInfractionRoutes'))
 app.use('/api/staff-infractions', require('./routes/staffInfractionRoutes'));
 app.use('/api/question-papers', require('./routes/questionPaperRoutes'));
 app.use('/api/fees', require('./routes/feeRoutes'));
+app.use('/api/banks', require('./routes/bankRoutes'));
 app.use('/api/exams', require('./routes/examRoutes'));
 app.use('/api/results', require('./routes/resultRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
@@ -126,8 +127,46 @@ app.use('/api/remarks', require('./routes/remarkRoutes'));
 app.use('/api/session-transfer', require('./routes/sessionTransferRoutes'));
 app.use('/api/global-search-settings', require('./routes/globalSearchSettingRoutes'));
 app.use('/api/change-academic-year', require('./routes/changeAcademicYearRoutes'));
+<<<<<<< HEAD
 app.use('/api/transport', require('./routes/transportRoutes'));
 
+=======
+app.use('/api/admission-settings', require('./routes/admissionSettingRoutes'));
+app.use('/api/enquiry-no-settings', require('./routes/enquiryNoSettingRoutes'));
+app.use('/api/registration-no-settings', require('./routes/registrationNoSettingRoutes'));
+app.use('/api/user-permissions', require('./routes/userPermissionRoutes'));
+app.use('/api/languages', require('./routes/languageRoutes'));
+app.use('/api/castes', require('./routes/casteRoutes'));
+app.use('/api/extra-activities', require('./routes/extraActivityRoutes'));
+app.use('/api/characters', require('./routes/characterRoutes'));
+app.use('/api/promotion-masters', require('./routes/promotionMasterRoutes'));
+app.use('/api/last-results', require('./routes/lastResultRoutes'));
+app.use('/api/term-masters', require('./routes/termMasterRoutes'));
+app.use('/api/mother-tongues', require('./routes/motherTongueRoutes'));
+app.use('/api/stationary-details', require('./routes/stationaryDetailsRoutes'));
+app.use('/api/tc-settings', require('./routes/tcSettingRoutes'));
+app.use('/api/report-layout-settings', require('./routes/reportLayoutSettingRoutes'));
+app.use('/api/enquiries', require('./routes/enquiryRoutes'));
+app.use('/api/prospectus-entries', require('./routes/prospectusEntryRoutes'));
+app.use('/api/manual-list-generation', require('./routes/manualListRoutes'));
+app.use('/api/slot-creations', require('./routes/slotCreationRoutes'));
+app.use('/api/fee-receipt-settings', require('./routes/feeReceiptSettingRoutes'));
+app.use('/api/fee-master-settings', require('./routes/feeMasterSettingRoutes'));
+app.use('/api/fee-types', require('./routes/feeTypeRoutes'));
+app.use('/api/fee-groups', require('./routes/feeGroupRoutes'));
+app.use('/api/fee-heads', require('./routes/feeHeadRoutes'));
+app.use('/api/fee-installments', require('./routes/feeInstallmentRoutes'));
+app.use('/api/expense-heads', require('./routes/expenseHeadRoutes'));
+app.use('/api/concession-types', require('./routes/concessionTypeRoutes'));
+app.use('/api/concessions', require('./routes/concessionRoutes'));
+app.use('/api/fee-group-to-heads', require('./routes/feeGroupToHeadRoutes'));
+app.use('/api/fee-amount-groups', require('./routes/feeAmountGroupRoutes'));
+app.use('/api/fee-head-concessions', require('./routes/feeHeadConcessionRoutes'));
+app.use('/api/fee-transactions', require('./routes/feeTransactionRoutes'));
+app.use('/api/security-money', require('./routes/securityMoneyRoutes'));
+app.use('/api/student-expenses', require('./routes/studentExpenseRoutes'));
+app.use('/api/transport', require('./routes/transportRoutes'));
+app.use('/api/fee-reports', require('./routes/feeReportRoutes'));
 // Basic route for testing
 app.get('/', (req, res) => {
   res.send('API is running...');

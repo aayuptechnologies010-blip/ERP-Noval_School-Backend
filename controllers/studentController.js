@@ -533,6 +533,135 @@ const importStudents = async (req, res) => {
   }
 };
 
+// @desc    Bulk update address and blood group
+// @route   PUT /api/students/bulk/address-blood
+// @access  Private (Admin)
+const bulkUpdateAddressBlood = async (req, res) => {
+  try {
+    const { updates } = req.body; // Expecting [{ studentId: '...', address: '...', bloodGroup: '...' }]
+
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ message: 'Invalid data format. Expected an array of updates in "updates" field.' });
+    }
+
+    const bulkOps = updates.map((update) => {
+      const setObj = {};
+      if (update.address !== undefined) {
+        setObj['contactAddress.currentAddress'] = update.address;
+      }
+      if (update.bloodGroup !== undefined) {
+        setObj['personalDetails.bloodGroup'] = update.bloodGroup;
+      }
+      return {
+        updateOne: {
+          filter: { _id: update.studentId },
+          update: { $set: setObj }
+        }
+      };
+    });
+
+    if (bulkOps.length > 0) {
+      const result = await Student.bulkWrite(bulkOps);
+      res.json({ message: 'Address and Blood Group updated successfully', result });
+    } else {
+      res.json({ message: 'No updates provided' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get possible siblings (grouped by parents & contact)
+// @route   GET /api/students/possible-siblings
+// @access  Private (Admin)
+const getPossibleSiblings = async (req, res) => {
+  try {
+    const possibleSiblings = await Student.aggregate([
+      {
+        $group: {
+          _id: {
+            fatherName: { 
+              $trim: { input: { $concat: [{ $ifNull: ["$familyDetails.father.firstName", ""] }, " ", { $ifNull: ["$familyDetails.father.lastName", ""] }] } }
+            },
+            motherName: { 
+              $trim: { input: { $concat: [{ $ifNull: ["$familyDetails.mother.firstName", ""] }, " ", { $ifNull: ["$familyDetails.mother.lastName", ""] }] } }
+            },
+            contactNumber: { $ifNull: ["$contactAddress.contactNumber", ""] }
+          },
+          students: {
+            $push: {
+              studentId: "$_id",
+              studentName: { 
+                $trim: { input: { $concat: [{ $ifNull: ["$personalDetails.firstName", ""] }, " ", { $ifNull: ["$personalDetails.lastName", ""] }] } }
+              },
+              gender: "$personalDetails.gender",
+              class: "$academicDetails.class",
+              familyId: "$familyDetails.familyId"
+            }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $match: { count: { $gt: 1 } }
+      }
+    ]);
+
+    // Format the response for the frontend
+    const formattedData = possibleSiblings.map((group, index) => ({
+      groupId: index + 1,
+      fatherName: group._id.fatherName,
+      motherName: group._id.motherName,
+      contactNumber: group._id.contactNumber,
+      students: group.students
+    }));
+
+    res.json(formattedData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Save/Link/Unlink Siblings
+// @route   POST /api/students/save-siblings
+// @access  Private (Admin)
+const saveSiblings = async (req, res) => {
+  try {
+    const { studentIdsToLink, studentIdsToUnlink } = req.body;
+
+    if (studentIdsToLink && studentIdsToLink.length > 0) {
+      // Find if any already has a familyId
+      const students = await Student.find({ _id: { $in: studentIdsToLink } });
+      let familyId = null;
+      for (const st of students) {
+        if (st.familyDetails && st.familyDetails.familyId) {
+          familyId = st.familyDetails.familyId;
+          break;
+        }
+      }
+      if (!familyId) {
+        familyId = new mongoose.Types.ObjectId().toString(); // generate unique
+      }
+
+      await Student.updateMany(
+        { _id: { $in: studentIdsToLink } },
+        { $set: { 'familyDetails.familyId': familyId } }
+      );
+    }
+
+    if (studentIdsToUnlink && studentIdsToUnlink.length > 0) {
+      await Student.updateMany(
+        { _id: { $in: studentIdsToUnlink } },
+        { $unset: { 'familyDetails.familyId': "" } }
+      );
+    }
+
+    res.json({ message: 'Siblings updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createStudent,
   getAllStudents,
@@ -545,9 +674,12 @@ module.exports = {
   bulkUpdateHouseNames,
   bulkUpdatePhotos,
   bulkUpdateClubs,
+  bulkUpdateAddressBlood,
   uploadStudentDocument,
   verifyStudentDocument,
   allotClassAndSection,
   generateTC,
-  importStudents
+  importStudents,
+  getPossibleSiblings,
+  saveSiblings
 };

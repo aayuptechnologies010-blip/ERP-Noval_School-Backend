@@ -86,8 +86,8 @@ const deleteSms = async (req, res) => {
 // @access  Private (Admin)
 const createTemplate = async (req, res) => {
   try {
-    const { subject, message } = req.body;
-    const template = new SmsTemplate({ subject, message });
+    const { subject, message, templateId, smsEnable, isUnicode, pushNotificationEnable } = req.body;
+    const template = new SmsTemplate({ subject, message, templateId, smsEnable, isUnicode, pushNotificationEnable });
     const saved = await template.save();
     res.status(201).json({ message: 'SMS template created successfully', data: saved });
   } catch (error) {
@@ -116,10 +116,10 @@ const getTemplates = async (req, res) => {
 // @access  Private (Admin)
 const updateTemplate = async (req, res) => {
   try {
-    const { subject, message } = req.body;
+    const { subject, message, templateId, smsEnable, isUnicode, pushNotificationEnable } = req.body;
     const template = await SmsTemplate.findByIdAndUpdate(
       req.params.id,
-      { subject, message },
+      { subject, message, templateId, smsEnable, isUnicode, pushNotificationEnable },
       { new: true, runValidators: true }
     );
     if (!template) return res.status(404).json({ message: 'Template not found' });

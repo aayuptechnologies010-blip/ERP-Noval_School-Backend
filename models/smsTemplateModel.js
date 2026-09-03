@@ -10,7 +10,11 @@ const smsTemplateSchema = new mongoose.Schema(
     message: {
       type: String,
       required: [true, 'Template message is required']
-    }
+    },
+    templateId: { type: String },
+    smsEnable: { type: Boolean, default: false },
+    isUnicode: { type: Boolean, default: false },
+    pushNotificationEnable: { type: Boolean, default: false }
   },
   {
     timestamps: true
