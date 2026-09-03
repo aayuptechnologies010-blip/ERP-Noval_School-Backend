@@ -127,10 +127,8 @@ app.use('/api/remarks', require('./routes/remarkRoutes'));
 app.use('/api/session-transfer', require('./routes/sessionTransferRoutes'));
 app.use('/api/global-search-settings', require('./routes/globalSearchSettingRoutes'));
 app.use('/api/change-academic-year', require('./routes/changeAcademicYearRoutes'));
-<<<<<<< HEAD
 app.use('/api/transport', require('./routes/transportRoutes'));
 
-=======
 app.use('/api/admission-settings', require('./routes/admissionSettingRoutes'));
 app.use('/api/enquiry-no-settings', require('./routes/enquiryNoSettingRoutes'));
 app.use('/api/registration-no-settings', require('./routes/registrationNoSettingRoutes'));
