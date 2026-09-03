@@ -60,6 +60,7 @@ app.use('/api/assignments', require('./routes/assignmentRoutes'));
 app.use('/api/lesson-plans', require('./routes/lessonPlanRoutes'));
 app.use('/api/timetables', require('./routes/timetableRoutes'));
 app.use('/api/promotions', require('./routes/promotionRoutes'));
+app.use('/api/surveys', require('./routes/surveyRoutes'));
 app.use('/api/syllabus', require('./routes/syllabusRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/specified-messages', require('./routes/specifiedMessageRoutes'));
@@ -77,6 +78,11 @@ app.use('/api/books', require('./routes/bookRoutes'));
 app.use('/api/ebooks', require('./routes/ebookRoutes'));
 app.use('/api/activities', require('./routes/activityRoutes'));
 app.use('/api/questionnaires', require('./routes/questionnaireRoutes'));
+app.use('/api/albums', require('./routes/albumRoutes'));
+app.use('/api/media', require('./routes/mediaRoutes'));
+app.use('/api/videos', require('./routes/videoRoutes'));
+app.use('/api/favorites', require('./routes/favoriteRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/thoughts', require('./routes/thoughtRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
 app.use('/api/appreciations', require('./routes/appreciationRoutes'));
@@ -120,6 +126,7 @@ app.use('/api/remarks', require('./routes/remarkRoutes'));
 app.use('/api/session-transfer', require('./routes/sessionTransferRoutes'));
 app.use('/api/global-search-settings', require('./routes/globalSearchSettingRoutes'));
 app.use('/api/change-academic-year', require('./routes/changeAcademicYearRoutes'));
+app.use('/api/transport', require('./routes/transportRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

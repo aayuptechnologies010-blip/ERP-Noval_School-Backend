@@ -57,8 +57,10 @@ const staffSchema = new mongoose.Schema({
   assignedSection: { type: String, default: null },
   
   // Custom Status
-  isFavorite: { type: Boolean, default: false }
+  isFavorite: { type: Boolean, default: false },
   
+  // Dashboard Favorites
+  favoritePages: [{ type: String }]
 }, {
   timestamps: true
 });

@@ -66,7 +66,10 @@ const adminSchema = new mongoose.Schema({
   role: {
     type: String,
     default: 'admin'
-  }
+  },
+  favoritePages: [{
+    type: String
+  }]
 }, {
   timestamps: true
 });

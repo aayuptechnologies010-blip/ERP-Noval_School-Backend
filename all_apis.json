@@ -77,6 +77,10 @@
       "path": "/api/students/:id/favorite"
     },
     {
+      "method": "POST",
+      "path": "/api/students/import"
+    },
+    {
       "method": "GET",
       "path": "/api/students/favorites"
     },
@@ -95,6 +99,22 @@
     {
       "method": "PUT",
       "path": "/api/students/bulk/clubs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/students/:id/documents"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/students/:id/documents/:docId/verify"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/students/:id/allotment"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/students/:id/generate-tc"
     }
   ],
   "/api/staffs": [
@@ -173,6 +193,38 @@
     {
       "method": "GET",
       "path": "/api/reports/birthdays"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/appreciations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/infractions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/my-infractions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/attendance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/average-attendance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/teachers-workload"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reports/lesson-plans"
     }
   ],
   "/api/attendance": [
@@ -323,6 +375,28 @@
     {
       "method": "DELETE",
       "path": "/api/assignments/:id"
+    }
+  ],
+  "/api/lesson-plans": [
+    {
+      "method": "POST",
+      "path": "/api/lesson-plans"
+    },
+    {
+      "method": "GET",
+      "path": "/api/lesson-plans"
+    },
+    {
+      "method": "GET",
+      "path": "/api/lesson-plans/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/lesson-plans/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/lesson-plans/:id"
     }
   ],
   "/api/timetables": [
@@ -609,16 +683,24 @@
   ],
   "/api/tasks": [
     {
+      "method": "GET",
+      "path": "/api/tasks"
+    },
+    {
       "method": "POST",
       "path": "/api/tasks"
     },
     {
       "method": "GET",
-      "path": "/api/tasks/my-tasks"
+      "path": "/api/tasks/:id"
     },
     {
-      "method": "PATCH",
-      "path": "/api/tasks/:id/done"
+      "method": "PUT",
+      "path": "/api/tasks/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/tasks/:id"
     }
   ],
   "/api/payslips": [
@@ -689,6 +771,876 @@
     {
       "method": "DELETE",
       "path": "/api/questionnaires/:id"
+    }
+  ],
+  "/api/thoughts": [
+    {
+      "method": "GET",
+      "path": "/api/thoughts"
+    },
+    {
+      "method": "POST",
+      "path": "/api/thoughts"
+    },
+    {
+      "method": "GET",
+      "path": "/api/thoughts/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/thoughts/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/thoughts/:id"
+    }
+  ],
+  "/api/appointments": [
+    {
+      "method": "GET",
+      "path": "/api/appointments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/appointments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/appointments/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/appointments/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/appointments/:id"
+    }
+  ],
+  "/api/appreciations": [
+    {
+      "method": "GET",
+      "path": "/api/appreciations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/appreciations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/appreciations/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/appreciations/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/appreciations/:id"
+    }
+  ],
+  "/api/rewards": [
+    {
+      "method": "GET",
+      "path": "/api/rewards"
+    },
+    {
+      "method": "POST",
+      "path": "/api/rewards"
+    },
+    {
+      "method": "GET",
+      "path": "/api/rewards/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/rewards/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/rewards/:id"
+    }
+  ],
+  "/api/student-appreciations": [
+    {
+      "method": "GET",
+      "path": "/api/student-appreciations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/student-appreciations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/student-appreciations/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/student-appreciations/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/student-appreciations/:id"
+    }
+  ],
+  "/api/staff-appreciations": [
+    {
+      "method": "GET",
+      "path": "/api/staff-appreciations"
+    },
+    {
+      "method": "POST",
+      "path": "/api/staff-appreciations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staff-appreciations/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/staff-appreciations/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/staff-appreciations/:id"
+    }
+  ],
+  "/api/infractions": [
+    {
+      "method": "GET",
+      "path": "/api/infractions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/infractions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/infractions/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/infractions/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/infractions/:id"
+    }
+  ],
+  "/api/consequences": [
+    {
+      "method": "GET",
+      "path": "/api/consequences"
+    },
+    {
+      "method": "POST",
+      "path": "/api/consequences"
+    },
+    {
+      "method": "GET",
+      "path": "/api/consequences/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/consequences/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/consequences/:id"
+    }
+  ],
+  "/api/student-infractions": [
+    {
+      "method": "GET",
+      "path": "/api/student-infractions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/student-infractions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/student-infractions/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/student-infractions/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/student-infractions/:id"
+    }
+  ],
+  "/api/staff-infractions": [
+    {
+      "method": "GET",
+      "path": "/api/staff-infractions"
+    },
+    {
+      "method": "POST",
+      "path": "/api/staff-infractions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/staff-infractions/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/staff-infractions/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/staff-infractions/:id"
+    }
+  ],
+  "/api/question-papers": [
+    {
+      "method": "POST",
+      "path": "/api/question-papers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/question-papers"
+    },
+    {
+      "method": "GET",
+      "path": "/api/question-papers/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/question-papers/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/question-papers/:id"
+    }
+  ],
+  "/api/fees": [
+    {
+      "method": "POST",
+      "path": "/api/fees"
+    },
+    {
+      "method": "GET",
+      "path": "/api/fees"
+    },
+    {
+      "method": "POST",
+      "path": "/api/fees/:id/pay"
+    },
+    {
+      "method": "GET",
+      "path": "/api/fees/student/:studentId"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/fees/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/fees/:id"
+    }
+  ],
+  "/api/exams": [
+    {
+      "method": "POST",
+      "path": "/api/exams"
+    },
+    {
+      "method": "GET",
+      "path": "/api/exams"
+    },
+    {
+      "method": "GET",
+      "path": "/api/exams/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/exams/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/exams/:id"
+    }
+  ],
+  "/api/results": [
+    {
+      "method": "POST",
+      "path": "/api/results"
+    },
+    {
+      "method": "GET",
+      "path": "/api/results/class"
+    },
+    {
+      "method": "GET",
+      "path": "/api/results/student/:studentId"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/results/:id"
+    }
+  ],
+  "/api/inquiries": [
+    {
+      "method": "POST",
+      "path": "/api/inquiries"
+    },
+    {
+      "method": "GET",
+      "path": "/api/inquiries"
+    },
+    {
+      "method": "GET",
+      "path": "/api/inquiries/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/inquiries/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/inquiries/:id"
+    }
+  ],
+  "/api/professions": [
+    {
+      "method": "POST",
+      "path": "/api/professions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/professions"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/professions/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/professions/:id"
+    }
+  ],
+  "/api/academic-years": [
+    {
+      "method": "POST",
+      "path": "/api/academic-years"
+    },
+    {
+      "method": "GET",
+      "path": "/api/academic-years"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/academic-years/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/academic-years/:id"
+    }
+  ],
+  "/api/financial-years": [
+    {
+      "method": "POST",
+      "path": "/api/financial-years"
+    },
+    {
+      "method": "GET",
+      "path": "/api/financial-years"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/financial-years/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/financial-years/:id"
+    }
+  ],
+  "/api/castes": [
+    {
+      "method": "POST",
+      "path": "/api/castes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/castes"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/castes/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/castes/:id"
+    }
+  ],
+  "/api/sub-castes": [
+    {
+      "method": "POST",
+      "path": "/api/sub-castes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sub-castes"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sub-castes/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sub-castes/:id"
+    }
+  ],
+  "/api/categories": [
+    {
+      "method": "POST",
+      "path": "/api/categories"
+    },
+    {
+      "method": "GET",
+      "path": "/api/categories"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/categories/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/categories/:id"
+    }
+  ],
+  "/api/parishes": [
+    {
+      "method": "POST",
+      "path": "/api/parishes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/parishes"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/parishes/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/parishes/:id"
+    }
+  ],
+  "/api/religions": [
+    {
+      "method": "POST",
+      "path": "/api/religions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/religions"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/religions/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/religions/:id"
+    }
+  ],
+  "/api/school-classes": [
+    {
+      "method": "POST",
+      "path": "/api/school-classes"
+    },
+    {
+      "method": "GET",
+      "path": "/api/school-classes"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/school-classes/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/school-classes/:id"
+    }
+  ],
+  "/api/school-global-details": [
+    {
+      "method": "POST",
+      "path": "/api/school-global-details"
+    },
+    {
+      "method": "GET",
+      "path": "/api/school-global-details"
+    },
+    {
+      "method": "GET",
+      "path": "/api/school-global-details/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/school-global-details/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/school-global-details/:id"
+    }
+  ],
+  "/api/school-boards": [
+    {
+      "method": "POST",
+      "path": "/api/school-boards"
+    },
+    {
+      "method": "GET",
+      "path": "/api/school-boards"
+    },
+    {
+      "method": "GET",
+      "path": "/api/school-boards/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/school-boards/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/school-boards/:id"
+    }
+  ],
+  "/api/school-global-fee-types": [
+    {
+      "method": "POST",
+      "path": "/api/school-global-fee-types"
+    },
+    {
+      "method": "GET",
+      "path": "/api/school-global-fee-types"
+    },
+    {
+      "method": "GET",
+      "path": "/api/school-global-fee-types/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/school-global-fee-types/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/school-global-fee-types/:id"
+    }
+  ],
+  "/api/wings": [
+    {
+      "method": "POST",
+      "path": "/api/wings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wings"
+    },
+    {
+      "method": "GET",
+      "path": "/api/wings/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/wings/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/wings/:id"
+    }
+  ],
+  "/api/sections": [
+    {
+      "method": "POST",
+      "path": "/api/sections"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sections"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sections/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sections/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sections/:id"
+    }
+  ],
+  "/api/class-sections": [
+    {
+      "method": "POST",
+      "path": "/api/class-sections"
+    },
+    {
+      "method": "GET",
+      "path": "/api/class-sections"
+    },
+    {
+      "method": "GET",
+      "path": "/api/class-sections/class/:className"
+    },
+    {
+      "method": "GET",
+      "path": "/api/class-sections/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/class-sections/:id"
+    }
+  ],
+  "/api/houses": [
+    {
+      "method": "POST",
+      "path": "/api/houses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/houses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/houses/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/houses/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/houses/:id"
+    }
+  ],
+  "/api/committees": [
+    {
+      "method": "POST",
+      "path": "/api/committees"
+    },
+    {
+      "method": "GET",
+      "path": "/api/committees"
+    },
+    {
+      "method": "GET",
+      "path": "/api/committees/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/committees/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/committees/:id"
+    }
+  ],
+  "/api/meeting-details": [
+    {
+      "method": "POST",
+      "path": "/api/meeting-details"
+    },
+    {
+      "method": "GET",
+      "path": "/api/meeting-details"
+    },
+    {
+      "method": "GET",
+      "path": "/api/meeting-details/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/meeting-details/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/meeting-details/:id"
+    }
+  ],
+  "/api/clubs": [
+    {
+      "method": "POST",
+      "path": "/api/clubs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/clubs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/clubs/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/clubs/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/clubs/:id"
+    }
+  ],
+  "/api/streams": [
+    {
+      "method": "POST",
+      "path": "/api/streams"
+    },
+    {
+      "method": "GET",
+      "path": "/api/streams"
+    },
+    {
+      "method": "GET",
+      "path": "/api/streams/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/streams/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/streams/:id"
+    }
+  ],
+  "/api/optional-subjects": [
+    {
+      "method": "POST",
+      "path": "/api/optional-subjects"
+    },
+    {
+      "method": "GET",
+      "path": "/api/optional-subjects"
+    },
+    {
+      "method": "GET",
+      "path": "/api/optional-subjects/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/optional-subjects/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/optional-subjects/:id"
+    }
+  ],
+  "/api/parents-statuses": [
+    {
+      "method": "POST",
+      "path": "/api/parents-statuses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/parents-statuses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/parents-statuses/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/parents-statuses/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/parents-statuses/:id"
+    }
+  ],
+  "/api/student-classifications": [
+    {
+      "method": "POST",
+      "path": "/api/student-classifications"
+    },
+    {
+      "method": "GET",
+      "path": "/api/student-classifications"
+    },
+    {
+      "method": "GET",
+      "path": "/api/student-classifications/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/student-classifications/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/student-classifications/:id"
+    }
+  ],
+  "/api/reasons": [
+    {
+      "method": "POST",
+      "path": "/api/reasons"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reasons"
+    },
+    {
+      "method": "GET",
+      "path": "/api/reasons/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/reasons/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/reasons/:id"
+    }
+  ],
+  "/api/remarks": [
+    {
+      "method": "POST",
+      "path": "/api/remarks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/remarks"
+    },
+    {
+      "method": "GET",
+      "path": "/api/remarks/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/remarks/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/remarks/:id"
+    }
+  ],
+  "/api/session-transfer": [
+    {
+      "method": "POST",
+      "path": "/api/session-transfer"
+    }
+  ],
+  "/api/global-search-settings": [
+    {
+      "method": "GET",
+      "path": "/api/global-search-settings"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/global-search-settings"
+    }
+  ],
+  "/api/change-academic-year": [
+    {
+      "method": "GET",
+      "path": "/api/change-academic-year/options"
+    },
+    {
+      "method": "POST",
+      "path": "/api/change-academic-year"
     }
   ]
 }
