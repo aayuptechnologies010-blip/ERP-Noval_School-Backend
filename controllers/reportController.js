@@ -30,6 +30,104 @@ const formatBirthdayData = (person, type) => {
   }
 };
 
+// ─── DAILY REPORTS (LATE IN / EARLY OUT) ──────────────────────────────────
+// @route GET /api/reports/late-early-out
+const getLateInEarlyOutReport = async (req, res) => {
+  try {
+    const { fromDate, toDate, staffType, designation, shift } = req.query;
+    
+    // Parse Date range
+    const start = fromDate ? new Date(fromDate) : new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = toDate ? new Date(toDate) : new Date(start);
+    end.setHours(23, 59, 59, 999);
+
+    // Build Staff Query
+    const staffQuery = {};
+    if (designation && designation !== 'All (38)' && !designation.startsWith('All')) {
+      staffQuery.designation = designation;
+    }
+    
+    // For staffType, we could populate role and filter, but for now we'll do an in-memory filter if needed, 
+    // or just fetch all staff matching designation first.
+    const allStaff = await Staff.find(staffQuery).populate('role', 'roleName').select('title firstName lastName userName designation role');
+
+    let filteredStaff = allStaff;
+    if (staffType && staffType !== 'All (13)' && !staffType.startsWith('All')) {
+      filteredStaff = filteredStaff.filter(s => s.role && s.role.roleName === staffType);
+    }
+    const staffIds = filteredStaff.map(s => s._id);
+
+    // Shift Logic (Simple Hardcoded rules for demo)
+    // Teacher's Timing: 08:00 to 14:00
+    // Office Staff Timing: 09:30 to 18:30
+    let shiftStartMinutes = 8 * 60; // default 08:00
+    let shiftEndMinutes = 14 * 60; // default 14:00
+    if (shift === 'Office Staff Timing') {
+      shiftStartMinutes = 9 * 60 + 30; // 09:30
+      shiftEndMinutes = 18 * 60 + 30; // 18:30
+    }
+
+    const timeToMinutes = (timeStr) => {
+      if (!timeStr) return null;
+      const parts = timeStr.split(':');
+      if (parts.length === 2) {
+        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      }
+      return null;
+    };
+
+    // Fetch Attendance
+    const attendances = await StaffAttendance.find({
+      date: { $gte: start, $lte: end },
+      staffId: { $in: staffIds }
+    });
+
+    const records = [];
+
+    attendances.forEach(att => {
+      const staff = filteredStaff.find(s => s._id.toString() === att.staffId.toString());
+      if (!staff) return;
+
+      const inMins = timeToMinutes(att.checkIn);
+      const outMins = timeToMinutes(att.checkOut);
+
+      let lateInMinutes = 0;
+      let earlyOutMinutes = 0;
+
+      if (inMins && inMins > shiftStartMinutes) {
+        lateInMinutes = inMins - shiftStartMinutes;
+      }
+      if (outMins && outMins < shiftEndMinutes) {
+        earlyOutMinutes = shiftEndMinutes - outMins;
+      }
+
+      // Only include if they are late in or early out
+      if (lateInMinutes > 0 || earlyOutMinutes > 0) {
+        records.push({
+          id: att._id,
+          date: att.date.toISOString().split('T')[0],
+          staffName: `${staff.firstName} ${staff.lastName}`.trim(),
+          empCode: staff.userName,
+          designation: staff.designation || 'N/A',
+          shift: shift && !shift.startsWith('All') ? shift : 'Standard',
+          punchIn: att.checkIn || 'N/A',
+          punchOut: att.checkOut || 'N/A',
+          lateIn: lateInMinutes > 0 ? `${Math.floor(lateInMinutes / 60)}h ${lateInMinutes % 60}m` : '-',
+          earlyOut: earlyOutMinutes > 0 ? `${Math.floor(earlyOutMinutes / 60)}h ${earlyOutMinutes % 60}m` : '-'
+        });
+      }
+    });
+
+    res.json({
+      summary: { totalRecords: records.length },
+      records
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Get birthday list (with filters)
 // @route   GET /api/reports/birthdays
 // @access  Private (Admin)
@@ -1325,6 +1423,7 @@ const getUndertakingReport = async (req, res) => {
 
 module.exports = {
   getBirthdays,
+  getLateInEarlyOutReport,
   getBirthdayChart,
   getTodaysBirthdays,
   getAppreciationReport,

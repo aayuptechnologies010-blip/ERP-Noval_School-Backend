@@ -12,6 +12,11 @@ const reportLayoutSettingSchema = new mongoose.Schema({
     trim: true
   },
   
+  format: {
+    type: String,
+    default: 'Format 1'
+  },
+  
   // Page Orientation & Layout Setting
   pageOrientation: { type: String, default: 'Portrait' },
   pageLayout: { type: String, default: 'A4' },

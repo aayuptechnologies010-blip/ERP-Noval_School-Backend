@@ -5,12 +5,16 @@ const {
   getStaffAttendanceByDeptDate,
   updateSingleStaffAttendance,
   getMyAttendance,
+  getMonthlyAttendanceSummary,
+  getDashboardSummary
 } = require('../controllers/staffAttendanceController');
 const { protect } = require('../middlewares/authMiddleware');
 
 router.use(protect);
 
 router.post('/mark', markStaffAttendance);
+router.get('/dashboard-summary', getDashboardSummary);
+router.get('/monthly-summary', getMonthlyAttendanceSummary);
 router.get('/', getStaffAttendanceByDeptDate);
 router.get('/my-attendance', getMyAttendance);
 router.put('/:id', updateSingleStaffAttendance);

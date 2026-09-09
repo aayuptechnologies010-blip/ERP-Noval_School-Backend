@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   getBirthdays,
+  getLateInEarlyOutReport,
   getBirthdayChart,
   getTodaysBirthdays,
   getAppreciationReport,
@@ -38,6 +39,7 @@ router.get('/infractions', getInfractionReport);
 router.get('/my-infractions', getMyInfractions);
 
 // Attendance Report
+router.get('/late-early-out', getLateInEarlyOutReport);
 router.get('/attendance', getAttendanceReport);
 router.get('/average-attendance', getAverageAttendanceAnalysis);
 router.get('/missing-attendance', getMissingAttendanceReport);

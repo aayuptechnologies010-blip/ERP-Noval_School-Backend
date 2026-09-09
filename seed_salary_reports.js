@@ -1,0 +1,222 @@
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const path = require('path');
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+const { SalaryPayroll } = require('./models/salaryStructureModel');
+
+const seedSalaryReportsData = async () => {
+  try {
+    console.log('Connecting to MongoDB...');
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB Connected.');
+
+    console.log('Clearing old Ayup SalaryPayroll records...');
+    await SalaryPayroll.deleteMany({ staffName: { $regex: /Ayup/i } });
+
+    const payrolls = [
+      {
+        staffName: 'Ayup Tech Lead',
+        employeeId: 'EMP-AT-001',
+        department: 'Information Technology',
+        designation: 'Head of Department & Tech Lead',
+        staffType: 'Teaching',
+        salaryAccount: 'Ayup Salary Account',
+        bankName: 'HDFC Bank',
+        bankAccountNo: '5010042918801',
+        ifscCode: 'HDFC0001234',
+        paymentMode: 'Bank Transfer',
+        monthYear: 'Aug-2026',
+        salaryType: 'Regular',
+        basicSalary: 65000,
+        da: 32500,
+        hra: 13000,
+        conveyance: 4000,
+        specialAllowance: 6500,
+        grossSalary: 121000,
+        pfDeduction: 1800,
+        esiDeduction: 0,
+        tdsDeduction: 4500,
+        insuranceDeduction: 1200,
+        advanceDeduction: 0,
+        totalDeductions: 7500,
+        netSalary: 113500,
+        chequeNo: 'CHQ-HDFC-99101',
+        chequeDate: new Date('2026-08-31'),
+        bankAdviceRef: 'ADV-HDFC-20260801',
+        statementGenerated: true,
+        status: 'Generated'
+      },
+      {
+        staffName: 'Ayup Sharma',
+        employeeId: 'EMP-AT-002',
+        department: 'Academics & Mathematics',
+        designation: 'Senior Faculty',
+        staffType: 'Teaching',
+        salaryAccount: 'Ayup Salary Account',
+        bankName: 'State Bank of India',
+        bankAccountNo: '3021984712019',
+        ifscCode: 'SBIN0004521',
+        paymentMode: 'Bank Transfer',
+        monthYear: 'Aug-2026',
+        salaryType: 'Regular',
+        basicSalary: 48000,
+        da: 24000,
+        hra: 9600,
+        conveyance: 3000,
+        specialAllowance: 3500,
+        grossSalary: 88100,
+        pfDeduction: 1800,
+        esiDeduction: 0,
+        tdsDeduction: 2200,
+        insuranceDeduction: 800,
+        advanceDeduction: 0,
+        totalDeductions: 4800,
+        netSalary: 83300,
+        chequeNo: 'CHQ-SBI-44201',
+        chequeDate: new Date('2026-08-31'),
+        bankAdviceRef: 'ADV-SBI-20260802',
+        statementGenerated: true,
+        status: 'Generated'
+      },
+      {
+        staffName: 'Ayup Verma',
+        employeeId: 'EMP-AT-003',
+        department: 'Administration & Finance',
+        designation: 'Administrative Officer',
+        staffType: 'Non-Teaching',
+        salaryAccount: 'Ayup Primary Account',
+        bankName: 'HDFC Bank',
+        bankAccountNo: '5010042918803',
+        ifscCode: 'HDFC0001234',
+        paymentMode: 'Bank Transfer',
+        monthYear: 'Aug-2026',
+        salaryType: 'Regular',
+        basicSalary: 38000,
+        da: 19000,
+        hra: 7600,
+        conveyance: 2500,
+        specialAllowance: 2000,
+        grossSalary: 69100,
+        pfDeduction: 1800,
+        esiDeduction: 518,
+        tdsDeduction: 1200,
+        insuranceDeduction: 600,
+        advanceDeduction: 0,
+        totalDeductions: 4118,
+        netSalary: 64982,
+        chequeNo: 'CHQ-HDFC-99103',
+        chequeDate: new Date('2026-08-31'),
+        bankAdviceRef: 'ADV-HDFC-20260803',
+        statementGenerated: true,
+        status: 'Generated'
+      },
+      {
+        staffName: 'Ayup Khan',
+        employeeId: 'EMP-AT-004',
+        department: 'Information Technology',
+        designation: 'System Administrator',
+        staffType: 'Non-Teaching',
+        salaryAccount: 'Ayup Salary Account',
+        bankName: 'ICICI Bank',
+        bankAccountNo: '0021059918204',
+        ifscCode: 'ICIC0009823',
+        paymentMode: 'Bank Transfer',
+        monthYear: 'Aug-2026',
+        salaryType: 'Regular',
+        basicSalary: 35000,
+        da: 17500,
+        hra: 7000,
+        conveyance: 2500,
+        specialAllowance: 2000,
+        grossSalary: 64000,
+        pfDeduction: 1800,
+        esiDeduction: 480,
+        tdsDeduction: 1000,
+        insuranceDeduction: 500,
+        advanceDeduction: 2000,
+        totalDeductions: 5780,
+        netSalary: 58220,
+        chequeNo: 'CHQ-ICICI-77104',
+        chequeDate: new Date('2026-08-31'),
+        bankAdviceRef: 'ADV-ICICI-20260804',
+        statementGenerated: true,
+        status: 'Generated'
+      },
+      {
+        staffName: 'Ayup Patel',
+        employeeId: 'EMP-AT-005',
+        department: 'Science & Laboratories',
+        designation: 'Laboratory Technician',
+        staffType: 'Technical',
+        salaryAccount: 'Ayup Salary Account',
+        bankName: 'Punjab National Bank',
+        bankAccountNo: '0192002100885',
+        ifscCode: 'PUNB0019200',
+        paymentMode: 'Cheque',
+        monthYear: 'Aug-2026',
+        salaryType: 'Regular',
+        basicSalary: 28000,
+        da: 14000,
+        hra: 5600,
+        conveyance: 2000,
+        specialAllowance: 1500,
+        grossSalary: 51100,
+        pfDeduction: 1800,
+        esiDeduction: 383,
+        tdsDeduction: 0,
+        insuranceDeduction: 500,
+        advanceDeduction: 0,
+        totalDeductions: 2683,
+        netSalary: 48417,
+        chequeNo: 'CHQ-PNB-10885',
+        chequeDate: new Date('2026-08-31'),
+        bankAdviceRef: 'ADV-PNB-20260805',
+        statementGenerated: true,
+        status: 'Generated'
+      },
+      {
+        staffName: 'Ayup Gupta',
+        employeeId: 'EMP-AT-006',
+        department: 'Academics & Science',
+        designation: 'Assistant Professor (Physics)',
+        staffType: 'Teaching',
+        salaryAccount: 'Ayup Salary Account',
+        bankName: 'HDFC Bank',
+        bankAccountNo: '5010042918806',
+        ifscCode: 'HDFC0001234',
+        paymentMode: 'Bank Transfer',
+        monthYear: 'Aug-2026',
+        salaryType: 'Regular',
+        basicSalary: 52000,
+        da: 26000,
+        hra: 10400,
+        conveyance: 3200,
+        specialAllowance: 4000,
+        grossSalary: 95600,
+        pfDeduction: 1800,
+        esiDeduction: 0,
+        tdsDeduction: 3000,
+        insuranceDeduction: 1000,
+        advanceDeduction: 0,
+        totalDeductions: 5800,
+        netSalary: 89800,
+        chequeNo: 'CHQ-HDFC-99106',
+        chequeDate: new Date('2026-08-31'),
+        bankAdviceRef: 'ADV-HDFC-20260806',
+        statementGenerated: true,
+        status: 'Generated'
+      }
+    ];
+
+    await SalaryPayroll.insertMany(payrolls);
+    console.log(`✅ Successfully seeded ${payrolls.length} SalaryPayroll records with "Ayup" names!`);
+    process.exit(0);
+  } catch (err) {
+    console.error('❌ Seeding failed:', err);
+    process.exit(1);
+  }
+};
+
+seedSalaryReportsData();
