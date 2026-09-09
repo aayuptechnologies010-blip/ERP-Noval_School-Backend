@@ -8,6 +8,7 @@ const studentSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     dateOfBirth: { type: Date },
     gender: { type: String },
+    bloodGroup: { type: String },
     religion: { type: String },
     caste: { type: String },
     subCaste: { type: String },
@@ -48,6 +49,19 @@ const studentSchema = new mongoose.Schema({
     optionalSubject: { type: String },
     previousClass: { type: String },
     sixSubject: { type: String }
+  },
+
+  // Transport Details
+  transportDetails: {
+    isTransportStudent: { type: Boolean, default: false },
+    isSelfTransport: { type: Boolean, default: false },
+    route: { type: mongoose.Schema.Types.ObjectId, ref: 'VehicleRoute' },
+    stop: { type: mongoose.Schema.Types.ObjectId, ref: 'RouteStop' },
+    vehicle: { type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle' },
+    transportGroup: { type: mongoose.Schema.Types.ObjectId, ref: 'TransportGroup' },
+    transportMedium: { type: mongoose.Schema.Types.ObjectId, ref: 'TransportMedium' },
+    transportFee: { type: Number, default: 0 },
+    assignedDate: { type: Date, default: Date.now }
   },
 
   // Unique Ids

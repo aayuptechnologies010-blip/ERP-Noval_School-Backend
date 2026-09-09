@@ -12,6 +12,7 @@ const {
   bulkUpdateHouseNames,
   bulkUpdatePhotos,
   bulkUpdateClubs,
+  bulkUpdateAddressBlood,
   uploadStudentDocument,
   verifyStudentDocument,
   allotClassAndSection,
@@ -22,11 +23,17 @@ const {
   bulkUpdateBankDetails,
   bulkUpdateComputerNumbers,
   bulkPromoteStudents
+  getPossibleSiblings,
+  saveSiblings
 } = require('../controllers/studentController');
 const { protect } = require('../middlewares/authMiddleware');
 const { uploadMultiple, uploadAny, uploadDocument, uploadSingle } = require('../middlewares/uploadMiddleware');
 
 // router.use(protect);
+
+// Possible siblings routes (must be before /:id)
+router.get('/possible-siblings', getPossibleSiblings);
+router.post('/save-siblings', saveSiblings);
 
 router.route('/')
   .post(uploadMultiple, createStudent)
@@ -64,6 +71,8 @@ router.put('/bulk/computer-numbers', bulkUpdateComputerNumbers);
 
 // Bulk promote students (must be before /:id)
 router.put('/bulk/promote', bulkPromoteStudents);
+// Bulk update address and blood group (must be before /:id)
+router.put('/bulk/address-blood', bulkUpdateAddressBlood);
 
 router.route('/:id')
   .get(getStudentById)
