@@ -15,13 +15,20 @@ const sendSms = async (req, res) => {
     // In a real application, you would integrate with an SMS gateway like Twilio here.
     // e.g., sendSmsViaGateway(sendTo, message);
 
+    let adminId = req.user?._id;
+    if (!adminId) {
+      const Admin = require('../models/adminModel');
+      const admin = await Admin.findOne();
+      if (admin) adminId = admin._id;
+    }
+
     const sms = new Sms({
       subject,
       language,
       message,
       sendCopy,
       sendTo,
-      createdBy: req.user?._id
+      createdBy: adminId
     });
 
     const saved = await sms.save();

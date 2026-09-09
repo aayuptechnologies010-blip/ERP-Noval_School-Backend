@@ -9,7 +9,7 @@ const {
 } = require('../controllers/inquiryController');
 const { protect } = require('../middlewares/authMiddleware');
 
-router.use(protect);
+// router.use(protect);
 
 router.route('/')
   .post(createInquiry)

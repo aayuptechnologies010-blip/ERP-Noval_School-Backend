@@ -37,9 +37,8 @@ app.use(cors({
 app.use(helmet({
   crossOriginResourcePolicy: false, // Allows images to be accessed from other origins
 }));
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 
 // Static folder for uploads
@@ -82,6 +81,7 @@ app.use('/api/albums', require('./routes/albumRoutes'));
 app.use('/api/media', require('./routes/mediaRoutes'));
 app.use('/api/videos', require('./routes/videoRoutes'));
 app.use('/api/favorites', require('./routes/favoriteRoutes'));
+app.use('/api/dashboard/admission-stats', require('./routes/admissionDashboardRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/thoughts', require('./routes/thoughtRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
@@ -98,6 +98,10 @@ app.use('/api/fees', require('./routes/feeRoutes'));
 app.use('/api/exams', require('./routes/examRoutes'));
 app.use('/api/results', require('./routes/resultRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
+app.use('/api/dob-requests', require('./routes/dobRequestRoutes'));
+app.use('/api/prospectus', require('./routes/prospectusRoutes'));
+app.use('/api/prospectuses', require('./routes/prospectusRoutes')); // plural alias
+app.use('/api/admission-forms', require('./routes/admissionFormRoutes'));
 app.use('/api/professions', require('./routes/professionRoutes'));
 app.use('/api/academic-years', require('./routes/academicYearRoutes'));
 app.use('/api/financial-years', require('./routes/financialYearRoutes'));
@@ -127,6 +131,46 @@ app.use('/api/session-transfer', require('./routes/sessionTransferRoutes'));
 app.use('/api/global-search-settings', require('./routes/globalSearchSettingRoutes'));
 app.use('/api/change-academic-year', require('./routes/changeAcademicYearRoutes'));
 app.use('/api/transport', require('./routes/transportRoutes'));
+app.use('/api/country-setting', require('./routes/countrySettingRoutes'));
+
+// Master Settings
+app.use('/api/admission-settings', require('./routes/admissionSettingRoutes'));
+app.use('/api/enquiry-no-settings', require('./routes/enquiryNoSettingRoutes'));
+app.use('/api/roles', require('./routes/roleRoutes'));
+
+// Define TC Details
+app.use('/api/languages', require('./routes/languageRoutes'));
+app.use('/api/tc-castes', require('./routes/tcCasteRoutes'));
+app.use('/api/extra-activities', require('./routes/extraActivityRoutes'));
+app.use('/api/characters', require('./routes/characterRoutes'));
+app.use('/api/promotion-masters', require('./routes/promotionMasterRoutes'));
+app.use('/api/last-results', require('./routes/lastResultRoutes'));
+app.use('/api/term-masters', require('./routes/termMasterRoutes'));
+app.use('/api/morals', require('./routes/moralRoutes'));
+app.use('/api/mother-tongues', require('./routes/motherTongueRoutes'));
+
+app.use('/api/admission-slots', require('./routes/admissionSlotRoutes'));
+app.use('/api/merit-criteria', require('./routes/meritCriteriaRoutes'));
+app.use('/api/merit-lists', require('./routes/meritListRoutes'));
+app.use('/api/school-documents', require('./routes/schoolDocRoutes'));
+app.use('/api/parent-requests', require('./routes/parentRequestRoutes'));
+app.use('/api/admission-fees', require('./routes/admissionFeeRoutes'));
+app.use('/api/admission-challans', require('./routes/admissionChallanRoutes'));
+app.use('/api/prospectus-settlements', require('./routes/prospectusSettlementRoutes'));
+
+// Certificate & TC Module Routes
+app.use('/api/transfer-certificates', require('./routes/transferCertificateRoutes'));
+app.use('/api/bonafide-certificates', require('./routes/bonafideCertificateRoutes'));
+app.use('/api/student-characteristics', require('./routes/studentCharacteristicRoutes'));
+app.use('/api/student-visa', require('./routes/studentVisaRoutes'));
+app.use('/api/cbse-registrations', require('./routes/cbseRegistrationRoutes'));
+app.use('/api/cbse-exam-confirmations', require('./routes/cbseExamConfirmationRoutes'));
+
+// Web Admin Module Routes
+app.use('/api/web-admin', require('./routes/webAdminRoutes'));
+
+// Marks Manager Module Routes
+app.use('/api/marks-manager', require('./routes/marksManagerRoutes'));
 
 // Basic route for testing
 app.get('/', (req, res) => {

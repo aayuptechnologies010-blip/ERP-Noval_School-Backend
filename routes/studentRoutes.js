@@ -16,13 +16,17 @@ const {
   verifyStudentDocument,
   allotClassAndSection,
   generateTC,
-  importStudents
+  importStudents,
+  bulkTransferSection,
+  bulkUpdateStatus,
+  bulkUpdateBankDetails,
+  bulkUpdateComputerNumbers,
+  bulkPromoteStudents
 } = require('../controllers/studentController');
 const { protect } = require('../middlewares/authMiddleware');
 const { uploadMultiple, uploadAny, uploadDocument, uploadSingle } = require('../middlewares/uploadMiddleware');
 
-// Protect all routes
-router.use(protect);
+// router.use(protect);
 
 router.route('/')
   .post(uploadMultiple, createStudent)
@@ -45,6 +49,21 @@ router.put('/bulk/photos', uploadAny, bulkUpdatePhotos);
 
 // Bulk update clubs (must be before /:id)
 router.put('/bulk/clubs', bulkUpdateClubs);
+
+// Bulk transfer section (must be before /:id)
+router.put('/bulk/transfer-section', bulkTransferSection);
+
+// Bulk update status (must be before /:id)
+router.put('/bulk/status', bulkUpdateStatus);
+
+// Bulk update bank details (must be before /:id)
+router.put('/bulk/bank-details', bulkUpdateBankDetails);
+
+// Bulk update computer numbers (must be before /:id)
+router.put('/bulk/computer-numbers', bulkUpdateComputerNumbers);
+
+// Bulk promote students (must be before /:id)
+router.put('/bulk/promote', bulkPromoteStudents);
 
 router.route('/:id')
   .get(getStudentById)

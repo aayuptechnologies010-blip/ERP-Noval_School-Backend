@@ -210,7 +210,8 @@ const studentSchema = new mongoose.Schema({
   ]
 
 }, {
-  timestamps: true
+  timestamps: true,
+  strict: false
 });
 
 const Student = mongoose.model('Student', studentSchema);

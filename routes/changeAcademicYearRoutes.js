@@ -6,6 +6,7 @@ const {
 } = require('../controllers/changeAcademicYearController');
 
 router.route('/options').get(getChangeAcademicYearOptions);
-router.route('/').post(changeAcademicYear);
+router.route('/').get(getChangeAcademicYearOptions).post(changeAcademicYear);
+
 
 module.exports = router;

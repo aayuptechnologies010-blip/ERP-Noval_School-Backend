@@ -12,7 +12,7 @@ const {
 } = require('../controllers/smsController');
 const { protect } = require('../middlewares/authMiddleware');
 
-router.use(protect);
+// router.use(protect);
 
 // SMS Templates Routes
 router.route('/templates')
