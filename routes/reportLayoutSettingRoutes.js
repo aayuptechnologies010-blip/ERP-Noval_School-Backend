@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createReportLayoutSetting,
-  getReportLayoutSettings,
-  getReportLayoutSettingById,
-  updateReportLayoutSetting,
-  deleteReportLayoutSetting
+  create,
+  getAll,
+  getById,
+  update,
+  remove
 } = require('../controllers/reportLayoutSettingController');
 
 router.route('/')
-  .post(createReportLayoutSetting)
-  .get(getReportLayoutSettings);
+  .post(create)
+  .get(getAll);
 
 router.route('/:id')
-  .get(getReportLayoutSettingById)
-  .put(updateReportLayoutSetting)
-  .delete(deleteReportLayoutSetting);
+  .get(getById)
+  .put(update)
+  .delete(remove);
 
 module.exports = router;

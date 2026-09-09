@@ -533,6 +533,126 @@ const importStudents = async (req, res) => {
   }
 };
 
+// @desc    Bulk transfer students from one class/section to another
+// @route   PUT /api/students/bulk/transfer-section
+const bulkTransferSection = async (req, res) => {
+  try {
+    const { studentIds, targetClass, targetSection } = req.body;
+    if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+      return res.status(400).json({ message: 'studentIds array is required' });
+    }
+    const updateFields = {};
+    if (targetClass) updateFields['academicDetails.class'] = targetClass;
+    if (targetSection) updateFields['academicDetails.section'] = targetSection;
+
+    const result = await Student.updateMany(
+      { _id: { $in: studentIds } },
+      { $set: updateFields }
+    );
+    res.json({ message: `${result.modifiedCount} student(s) transferred successfully`, result });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Bulk update status (STUDYING, LEFT, etc.) or isActive
+// @route   PUT /api/students/bulk/status
+const bulkUpdateStatus = async (req, res) => {
+  try {
+    const { studentIds, status, isActive } = req.body;
+    if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+      return res.status(400).json({ message: 'studentIds array is required' });
+    }
+    const updateFields = {};
+    if (status) updateFields['academicDetails.currentStatus'] = status;
+    if (typeof isActive === 'boolean') updateFields['personalDetails.isActive'] = isActive;
+
+    const result = await Student.updateMany(
+      { _id: { $in: studentIds } },
+      { $set: updateFields }
+    );
+    res.json({ message: `${result.modifiedCount} student status updated successfully`, result });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Bulk update bank details
+// @route   PUT /api/students/bulk/bank-details
+const bulkUpdateBankDetails = async (req, res) => {
+  try {
+    const { updates } = req.body;
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ message: 'updates array is required' });
+    }
+    const bulkOps = updates.map(u => ({
+      updateOne: {
+        filter: { _id: u.studentId },
+        update: {
+          $set: {
+            'bankDetails.bankName': u.bankName,
+            'bankDetails.accountNumber': u.accountNumber,
+            'bankDetails.ifscCode': u.ifscCode,
+            'bankDetails.branch': u.branch
+          }
+        }
+      }
+    }));
+    const result = await Student.bulkWrite(bulkOps);
+    res.json({ message: 'Bank details saved successfully', result });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Bulk update computer numbers
+// @route   PUT /api/students/bulk/computer-numbers
+const bulkUpdateComputerNumbers = async (req, res) => {
+  try {
+    const { updates } = req.body;
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ message: 'updates array is required' });
+    }
+    const bulkOps = updates.map(u => ({
+      updateOne: {
+        filter: { _id: u.studentId },
+        update: {
+          $set: {
+            'uniqueIds.studentNumber': u.computerNumber
+          }
+        }
+      }
+    }));
+    const result = await Student.bulkWrite(bulkOps);
+    res.json({ message: 'Computer numbers saved successfully', result });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// @desc    Bulk promote students to new session/class/section
+// @route   PUT /api/students/bulk/promote
+const bulkPromoteStudents = async (req, res) => {
+  try {
+    const { studentIds, targetSession, targetClass, targetSection } = req.body;
+    if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+      return res.status(400).json({ message: 'studentIds array is required' });
+    }
+    const updateFields = {};
+    if (targetClass) updateFields['academicDetails.class'] = targetClass;
+    if (targetSection) updateFields['academicDetails.section'] = targetSection;
+    if (targetSession) updateFields['academicDetails.session'] = targetSession;
+
+    const result = await Student.updateMany(
+      { _id: { $in: studentIds } },
+      { $set: updateFields }
+    );
+    res.json({ message: `${result.modifiedCount} student(s) promoted successfully`, result });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // @desc    Bulk update address and blood group
 // @route   PUT /api/students/bulk/address-blood
 // @access  Private (Admin)
@@ -680,6 +800,11 @@ module.exports = {
   allotClassAndSection,
   generateTC,
   importStudents,
+  bulkTransferSection,
+  bulkUpdateStatus,
+  bulkUpdateBankDetails,
+  bulkUpdateComputerNumbers,
+  bulkPromoteStudents,
   getPossibleSiblings,
   saveSiblings
 };

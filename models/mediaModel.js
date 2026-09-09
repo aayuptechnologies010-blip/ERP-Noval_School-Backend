@@ -3,12 +3,27 @@ const mongoose = require('mongoose');
 const mediaSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: false,
     trim: true
+  },
+  headline: {
+    type: String,
+    trim: true
+  },
+  mediaName: {
+    type: String,
+    trim: true
+  },
+  publishDate: {
+    type: Date,
+    default: Date.now
+  },
+  mediaSource: {
+    type: String,
+    default: 'url'
   },
   type: {
     type: String,
-    enum: ['image', 'video', 'document'],
     default: 'image'
   },
   fileUrl: {

@@ -2,14 +2,44 @@ const mongoose = require('mongoose');
 
 const noticeSchema = new mongoose.Schema(
   {
+    title: {
+      type: String,
+      trim: true
+    },
     heading: {
       type: String,
-      required: [true, 'Notice heading is required'],
       trim: true
+    },
+    category: {
+      type: String,
+      default: 'General'
+    },
+    noticeDate: {
+      type: Date,
+      default: Date.now
+    },
+    activationDate: {
+      type: Date,
+      default: Date.now
+    },
+    deactivationDate: {
+      type: Date
+    },
+    attachment: {
+      type: String,
+      default: ''
+    },
+    coverImage: {
+      type: String,
+      default: ''
+    },
+    showOnWebsite: {
+      type: Boolean,
+      default: true
     },
     description: {
       type: String,
-      required: [true, 'Notice description is required']
+      default: ''
     },
     isActive: {
       type: Boolean,
@@ -17,15 +47,13 @@ const noticeSchema = new mongoose.Schema(
     },
     readBy: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        // Using generic reference since users can be of different types,
-        // or just rely on the ID matching the logged-in user.
+        type: mongoose.Schema.Types.ObjectId
       }
     ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Admin',
-      required: true
+      required: false
     }
   },
   {

@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getEnquiryNoSetting,
-  updateEnquiryNoSetting
-} = require('../controllers/enquiryNoSettingController');
+const { getSetting, updateSetting } = require('../controllers/enquiryNoSettingController');
 
-router.route('/:sessionId')
-  .get(getEnquiryNoSetting)
-  .put(updateEnquiryNoSetting);
+router.route('/')
+  .get(getSetting)
+  .put(updateSetting);
 
 module.exports = router;

@@ -1,20 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createCharacter,
-  getCharacters,
-  getCharacterById,
-  updateCharacter,
-  deleteCharacter
-} = require('../controllers/characterController');
+const { create, getAll, update, remove } = require('../controllers/characterController');
 
-router.route('/')
-  .post(createCharacter)
-  .get(getCharacters);
-
-router.route('/:id')
-  .get(getCharacterById)
-  .put(updateCharacter)
-  .delete(deleteCharacter);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

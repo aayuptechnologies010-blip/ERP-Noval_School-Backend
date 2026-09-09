@@ -1,110 +1,31 @@
-const PromotionMaster = require('../models/promotionMasterModel');
+const PromotionMaster = require('../models/promotionMasterModel.js');
 
-// @desc    Create a new promotion master
-// @route   POST /api/promotion-masters
-// @access  Private
-const createPromotionMaster = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    const { promotionName } = req.body;
-
-    if (!promotionName) {
-      return res.status(400).json({ message: 'Promotion name is required' });
-    }
-
-    const exists = await PromotionMaster.findOne({ promotionName: { $regex: new RegExp(`^${promotionName}$`, 'i') } });
-
-    if (exists) {
-      return res.status(400).json({ message: 'Promotion already exists' });
-    }
-
-    const promotion = await PromotionMaster.create({
-      promotionName
-    });
-
-    res.status(201).json(promotion);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    const doc = await PromotionMaster.create(req.body);
+    res.status(201).json(doc);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-// @desc    Get all promotion masters
-// @route   GET /api/promotion-masters
-// @access  Private
-const getPromotionMasters = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const promotions = await PromotionMaster.find({}).sort({ createdAt: -1 });
-    res.status(200).json(promotions);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    const docs = await PromotionMaster.find();
+    res.status(200).json(docs);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-// @desc    Get promotion master by ID
-// @route   GET /api/promotion-masters/:id
-// @access  Private
-const getPromotionMasterById = async (req, res) => {
+exports.update = async (req, res) => {
   try {
-    const promotion = await PromotionMaster.findById(req.params.id);
-    if (!promotion) {
-      return res.status(404).json({ message: 'Promotion not found' });
-    }
-    res.status(200).json(promotion);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    const doc = await PromotionMaster.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!doc) return res.status(404).json({ message: 'Not found' });
+    res.status(200).json(doc);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-// @desc    Update a promotion master
-// @route   PUT /api/promotion-masters/:id
-// @access  Private
-const updatePromotionMaster = async (req, res) => {
+exports.remove = async (req, res) => {
   try {
-    const { promotionName, isActive } = req.body;
-    const promotion = await PromotionMaster.findById(req.params.id);
-
-    if (!promotion) {
-      return res.status(404).json({ message: 'Promotion not found' });
-    }
-
-    if (promotionName && promotionName.toLowerCase() !== promotion.promotionName.toLowerCase()) {
-      const exists = await PromotionMaster.findOne({ promotionName: { $regex: new RegExp(`^${promotionName}$`, 'i') } });
-      if (exists) {
-        return res.status(400).json({ message: 'Promotion name already in use' });
-      }
-    }
-
-    if (promotionName) promotion.promotionName = promotionName;
-    if (isActive !== undefined) promotion.isActive = isActive;
-
-    const updatedPromotion = await promotion.save();
-    res.status(200).json(updatedPromotion);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// @desc    Delete a promotion master
-// @route   DELETE /api/promotion-masters/:id
-// @access  Private
-const deletePromotionMaster = async (req, res) => {
-  try {
-    const promotion = await PromotionMaster.findById(req.params.id);
-
-    if (!promotion) {
-      return res.status(404).json({ message: 'Promotion not found' });
-    }
-
-    await promotion.deleteOne();
-    res.status(200).json({ message: 'Promotion removed' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-module.exports = {
-  createPromotionMaster,
-  getPromotionMasters,
-  getPromotionMasterById,
-  updatePromotionMaster,
-  deletePromotionMaster
+    const doc = await PromotionMaster.findByIdAndDelete(req.params.id);
+    if (!doc) return res.status(404).json({ message: 'Not found' });
+    res.status(200).json({ message: 'Deleted successfully' });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 };

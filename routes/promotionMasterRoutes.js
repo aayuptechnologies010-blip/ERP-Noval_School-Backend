@@ -1,20 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createPromotionMaster,
-  getPromotionMasters,
-  getPromotionMasterById,
-  updatePromotionMaster,
-  deletePromotionMaster
-} = require('../controllers/promotionMasterController');
+const { create, getAll, update, remove } = require('../controllers/promotionMasterController');
 
-router.route('/')
-  .post(createPromotionMaster)
-  .get(getPromotionMasters);
-
-router.route('/:id')
-  .get(getPromotionMasterById)
-  .put(updatePromotionMaster)
-  .delete(deletePromotionMaster);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

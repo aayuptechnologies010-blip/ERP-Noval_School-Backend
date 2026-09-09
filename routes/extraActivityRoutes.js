@@ -1,20 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createExtraActivity,
-  getExtraActivities,
-  getExtraActivityById,
-  updateExtraActivity,
-  deleteExtraActivity
-} = require('../controllers/extraActivityController');
+const { create, getAll, update, remove } = require('../controllers/extraActivityController');
 
-router.route('/')
-  .post(createExtraActivity)
-  .get(getExtraActivities);
-
-router.route('/:id')
-  .get(getExtraActivityById)
-  .put(updateExtraActivity)
-  .delete(deleteExtraActivity);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

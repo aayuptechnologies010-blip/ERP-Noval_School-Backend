@@ -1,20 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createLanguage,
-  getLanguages,
-  getLanguageById,
-  updateLanguage,
-  deleteLanguage
-} = require('../controllers/languageController');
+const { create, getAll, update, remove } = require('../controllers/languageController');
 
-router.route('/')
-  .post(createLanguage)
-  .get(getLanguages);
-
-router.route('/:id')
-  .get(getLanguageById)
-  .put(updateLanguage)
-  .delete(deleteLanguage);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

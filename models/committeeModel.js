@@ -13,7 +13,6 @@ const committeeSchema = new mongoose.Schema({
   },
   memberType: {
     type: String,
-    enum: ['Employee', 'Student', 'Other'],
     default: 'Employee',
     required: true
   },

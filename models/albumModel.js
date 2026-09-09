@@ -9,10 +9,21 @@ const albumSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  category: {
+    type: String,
+    default: 'General'
+  },
+  description: {
+    type: String,
+    default: ''
+  },
   coverImage: {
     type: String,
     default: ''
   },
+  photos: [{
+    type: String
+  }],
   totalMemories: {
     type: Number,
     default: 0

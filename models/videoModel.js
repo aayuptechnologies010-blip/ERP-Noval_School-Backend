@@ -6,11 +6,23 @@ const videoSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  category: {
+    type: String,
+    default: 'General'
+  },
+  description: {
+    type: String,
+    default: ''
+  },
   videoUrl: {
     type: String,
     default: ''
   },
   thumbnail: {
+    type: String,
+    default: ''
+  },
+  coverImage: {
     type: String,
     default: ''
   },
@@ -20,6 +32,10 @@ const videoSchema = new mongoose.Schema({
   },
   eventDate: {
     type: Date
+  },
+  status: {
+    type: String,
+    default: 'Active'
   },
   isActive: {
     type: Boolean,
@@ -32,3 +48,4 @@ const videoSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('Video', videoSchema);
+

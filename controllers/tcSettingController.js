@@ -1,68 +1,31 @@
-const TCSetting = require('../models/tcSettingModel');
+const TcSetting = require('../models/tcSettingModel.js');
 
-// @desc    Get TC form setting (singleton)
-// @route   GET /api/tc-settings
-// @access  Private
-const getTCSetting = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    let setting = await TCSetting.findOne();
-    
-    if (!setting) {
-      setting = await TCSetting.create({
-        subjectFromMarksManager: true,
-        subjectFromTimeTable: true,
-        attendanceFromECare: true,
-        checkDuesInFees: true,
-        checkDuesInLibrary: true
-      });
-    }
-
-    res.status(200).json(setting);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    const doc = await TcSetting.create(req.body);
+    res.status(201).json(doc);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-// @desc    Update or create TC form setting
-// @route   PUT /api/tc-settings
-// @access  Private
-const upsertTCSetting = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const {
-      subjectFromMarksManager,
-      subjectFromTimeTable,
-      attendanceFromECare,
-      checkDuesInFees,
-      checkDuesInLibrary
-    } = req.body;
-
-    let setting = await TCSetting.findOne();
-
-    if (!setting) {
-      setting = await TCSetting.create({
-        subjectFromMarksManager,
-        subjectFromTimeTable,
-        attendanceFromECare,
-        checkDuesInFees,
-        checkDuesInLibrary
-      });
-    } else {
-      if (subjectFromMarksManager !== undefined) setting.subjectFromMarksManager = subjectFromMarksManager;
-      if (subjectFromTimeTable !== undefined) setting.subjectFromTimeTable = subjectFromTimeTable;
-      if (attendanceFromECare !== undefined) setting.attendanceFromECare = attendanceFromECare;
-      if (checkDuesInFees !== undefined) setting.checkDuesInFees = checkDuesInFees;
-      if (checkDuesInLibrary !== undefined) setting.checkDuesInLibrary = checkDuesInLibrary;
-
-      await setting.save();
-    }
-
-    res.status(200).json(setting);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+    const docs = await TcSetting.find();
+    res.status(200).json(docs);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-module.exports = {
-  getTCSetting,
-  upsertTCSetting
+exports.update = async (req, res) => {
+  try {
+    const doc = await TcSetting.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!doc) return res.status(404).json({ message: 'Not found' });
+    res.status(200).json(doc);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+};
+
+exports.remove = async (req, res) => {
+  try {
+    const doc = await TcSetting.findByIdAndDelete(req.params.id);
+    if (!doc) return res.status(404).json({ message: 'Not found' });
+    res.status(200).json({ message: 'Deleted successfully' });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 };

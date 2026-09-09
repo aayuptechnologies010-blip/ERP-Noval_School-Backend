@@ -1,48 +1,33 @@
 const EnquiryNoSetting = require('../models/enquiryNoSettingModel');
 
-// @desc    Get enquiry no setting by session
-// @route   GET /api/enquiry-no-settings/:sessionId
+// @desc    Get enquiry no setting
+// @route   GET /api/enquiry-no-settings
 // @access  Private
-const getEnquiryNoSetting = async (req, res) => {
+const getSetting = async (req, res) => {
   try {
-    const { sessionId } = req.params;
-    let setting = await EnquiryNoSetting.findOne({ session: sessionId }).populate('session');
-    
+    let setting = await EnquiryNoSetting.findOne();
     if (!setting) {
-      // Create a default if it doesn't exist for the session
-      setting = await EnquiryNoSetting.create({ session: sessionId });
-      // Re-fetch to populate
-      setting = await EnquiryNoSetting.findById(setting._id).populate('session');
+      setting = await EnquiryNoSetting.create({});
     }
-
     res.status(200).json(setting);
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message });
-    }
     res.status(500).json({ message: error.message });
   }
 };
 
 // @desc    Update enquiry no setting
-// @route   PUT /api/enquiry-no-settings/:sessionId
+// @route   PUT /api/enquiry-no-settings
 // @access  Private
-const updateEnquiryNoSetting = async (req, res) => {
+const updateSetting = async (req, res) => {
   try {
-    const { sessionId } = req.params;
-    const updateData = req.body;
-
-    // Prevent changing the session reference via update
-    if (updateData.session) {
-      delete updateData.session;
+    let setting = await EnquiryNoSetting.findOne();
+    if (!setting) {
+      setting = new EnquiryNoSetting(req.body);
+    } else {
+      Object.assign(setting, req.body);
     }
-
-    const updatedSetting = await EnquiryNoSetting.findOneAndUpdate(
-      { session: sessionId },
-      { $set: updateData },
-      { new: true, runValidators: true, upsert: true }
-    ).populate('session');
-
+    
+    const updatedSetting = await setting.save();
     res.status(200).json(updatedSetting);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -50,6 +35,6 @@ const updateEnquiryNoSetting = async (req, res) => {
 };
 
 module.exports = {
-  getEnquiryNoSetting,
-  updateEnquiryNoSetting
+  getSetting,
+  updateSetting
 };

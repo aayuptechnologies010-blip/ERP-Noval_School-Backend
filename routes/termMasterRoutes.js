@@ -1,20 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createTermMaster,
-  getTermMasters,
-  getTermMasterById,
-  updateTermMaster,
-  deleteTermMaster
-} = require('../controllers/termMasterController');
+const { create, getAll, update, remove } = require('../controllers/termMasterController');
 
-router.route('/')
-  .post(createTermMaster)
-  .get(getTermMasters);
-
-router.route('/:id')
-  .get(getTermMasterById)
-  .put(updateTermMaster)
-  .delete(deleteTermMaster);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

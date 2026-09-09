@@ -5,17 +5,12 @@ const Inquiry = require('../models/inquiryModel');
 // @access  Private (Admin/Admission Manager)
 const createInquiry = async (req, res) => {
   try {
-    const { parentName, contactNumber, email, childName, classInterested, followUpDate, remarks } = req.body;
+    const body = { ...req.body };
+    if (!body.studentName && body.childName) body.studentName = body.childName;
+    if (!body.contactNo && body.contactNumber) body.contactNo = body.contactNumber;
+    if (!body.guardianName && body.parentName) body.guardianName = body.parentName;
 
-    const inquiry = await Inquiry.create({
-      parentName,
-      contactNumber,
-      email,
-      childName,
-      classInterested,
-      followUpDate,
-      remarks
-    });
+    const inquiry = await Inquiry.create(body);
 
     res.status(201).json({ message: 'Inquiry logged successfully', inquiry });
   } catch (error) {

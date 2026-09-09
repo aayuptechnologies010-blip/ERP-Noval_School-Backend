@@ -1,20 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createLastResult,
-  getLastResults,
-  getLastResultById,
-  updateLastResult,
-  deleteLastResult
-} = require('../controllers/lastResultController');
+const { create, getAll, update, remove } = require('../controllers/lastResultController');
 
-router.route('/')
-  .post(createLastResult)
-  .get(getLastResults);
-
-router.route('/:id')
-  .get(getLastResultById)
-  .put(updateLastResult)
-  .delete(deleteLastResult);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

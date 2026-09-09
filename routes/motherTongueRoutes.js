@@ -1,20 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createMotherTongue,
-  getMotherTongues,
-  getMotherTongueById,
-  updateMotherTongue,
-  deleteMotherTongue
-} = require('../controllers/motherTongueController');
+const { create, getAll, update, remove } = require('../controllers/motherTongueController');
 
-router.route('/')
-  .post(createMotherTongue)
-  .get(getMotherTongues);
-
-router.route('/:id')
-  .get(getMotherTongueById)
-  .put(updateMotherTongue)
-  .delete(deleteMotherTongue);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

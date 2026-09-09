@@ -18,14 +18,18 @@ const {
   allotClassAndSection,
   generateTC,
   importStudents,
+  bulkTransferSection,
+  bulkUpdateStatus,
+  bulkUpdateBankDetails,
+  bulkUpdateComputerNumbers,
+  bulkPromoteStudents,
   getPossibleSiblings,
   saveSiblings
 } = require('../controllers/studentController');
 const { protect } = require('../middlewares/authMiddleware');
 const { uploadMultiple, uploadAny, uploadDocument, uploadSingle } = require('../middlewares/uploadMiddleware');
 
-// Protect all routes
-router.use(protect);
+// router.use(protect);
 
 // Possible siblings routes (must be before /:id)
 router.get('/possible-siblings', getPossibleSiblings);
@@ -53,6 +57,20 @@ router.put('/bulk/photos', uploadAny, bulkUpdatePhotos);
 // Bulk update clubs (must be before /:id)
 router.put('/bulk/clubs', bulkUpdateClubs);
 
+// Bulk transfer section (must be before /:id)
+router.put('/bulk/transfer-section', bulkTransferSection);
+
+// Bulk update status (must be before /:id)
+router.put('/bulk/status', bulkUpdateStatus);
+
+// Bulk update bank details (must be before /:id)
+router.put('/bulk/bank-details', bulkUpdateBankDetails);
+
+// Bulk update computer numbers (must be before /:id)
+router.put('/bulk/computer-numbers', bulkUpdateComputerNumbers);
+
+// Bulk promote students (must be before /:id)
+router.put('/bulk/promote', bulkPromoteStudents);
 // Bulk update address and blood group (must be before /:id)
 router.put('/bulk/address-blood', bulkUpdateAddressBlood);
 

@@ -1,12 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getTCSetting,
-  upsertTCSetting
-} = require('../controllers/tcSettingController');
+const { create, getAll, update, remove } = require('../controllers/tcSettingController');
 
-router.route('/')
-  .get(getTCSetting)
-  .put(upsertTCSetting);
+router.route('/').get(getAll).post(create);
+router.route('/:id').put(update).delete(remove);
 
 module.exports = router;

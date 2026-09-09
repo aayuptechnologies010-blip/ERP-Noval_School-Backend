@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getAdmissionSettings,
-  updateAdmissionSettings
-} = require('../controllers/admissionSettingController');
+const { getSetting, updateSetting } = require('../controllers/admissionSettingController');
 
 router.route('/')
-  .get(getAdmissionSettings)
-  .put(updateAdmissionSettings);
+  .get(getSetting)
+  .put(updateSetting);
 
 module.exports = router;

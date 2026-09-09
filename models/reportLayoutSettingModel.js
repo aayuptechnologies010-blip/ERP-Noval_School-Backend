@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 
 const reportLayoutSettingSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    trim: true
+  },
   reportName: {
     type: String,
-    required: [true, 'Report Name is required'],
-    unique: true,
     trim: true
   },
   reportTitle: {
@@ -62,6 +64,13 @@ const reportLayoutSettingSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const ReportLayoutSetting = mongoose.model('ReportLayoutSetting', reportLayoutSettingSchema);
+// Middleware to sync name and reportName if either is provided
+reportLayoutSettingSchema.pre('save', function(next) {
+  if (this.reportName && !this.name) this.name = this.reportName;
+  if (this.name && !this.reportName) this.reportName = this.name;
+  next();
+});
+
+const ReportLayoutSetting = mongoose.models.ReportLayoutSetting || mongoose.model('ReportLayoutSetting', reportLayoutSettingSchema);
 
 module.exports = ReportLayoutSetting;
