@@ -469,6 +469,295 @@ const updateChequeStatus = async (req, res) => {
   }
 };
 
+// @desc    Download Sample Excel Template for Fee Upload
+// @route   GET /api/fee-transactions/sample-template
+// @access  Private
+const downloadSampleFeeExcel = async (req, res) => {
+  try {
+    const XLSX = require('xlsx');
+
+    const sampleData = [
+      {
+        'Admission No': 'NS-1001',
+        'Student Name': 'Aarav Sharma',
+        'Class': 'Class - X',
+        'Amount Paid': 15000,
+        'Payment Mode': 'Cash',
+        'Receipt Date': '2026-08-15',
+        'Receipt No': 'REC-1001',
+        'Bank / Reference No': '',
+        'Remarks': 'Quarter 1 Fee'
+      },
+      {
+        'Admission No': 'NS-1002',
+        'Student Name': 'Ananya Singh',
+        'Class': 'Class - VIII',
+        'Amount Paid': 12500,
+        'Payment Mode': 'UPI',
+        'Receipt Date': '2026-08-16',
+        'Receipt No': 'REC-1002',
+        'Bank / Reference No': 'UPI9876543210',
+        'Remarks': 'Admission Installment'
+      },
+      {
+        'Admission No': 'NS-1003',
+        'Student Name': 'Rohan Patel',
+        'Class': 'Class - V',
+        'Amount Paid': 9000,
+        'Payment Mode': 'Cheque',
+        'Receipt Date': '2026-08-20',
+        'Receipt No': 'REC-1003',
+        'Bank / Reference No': 'CHQ-554421',
+        'Remarks': 'HDFC Cheque'
+      }
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(sampleData);
+    
+    // Set column widths
+    ws['!cols'] = [
+      { wch: 15 }, // Admission No
+      { wch: 22 }, // Student Name
+      { wch: 15 }, // Class
+      { wch: 15 }, // Amount Paid
+      { wch: 15 }, // Payment Mode
+      { wch: 15 }, // Receipt Date
+      { wch: 15 }, // Receipt No
+      { wch: 22 }, // Bank / Reference No
+      { wch: 25 }  // Remarks
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Fee_Upload_Template');
+
+    const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    res.setHeader('Content-Disposition', 'attachment; filename="Student_Fee_Upload_Sample_Template.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    return res.status(200).send(buffer);
+  } catch (error) {
+    console.error('Error generating sample template:', error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Bulk Upload Student Paid Fees from Excel/CSV
+// @route   POST /api/fee-transactions/upload-excel
+// @access  Private
+const uploadBulkFeesExcel = async (req, res) => {
+  try {
+    const XLSX = require('xlsx');
+
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ success: false, message: 'Please select an Excel or CSV file to upload.' });
+    }
+
+    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    if (!sheetName) {
+      return res.status(400).json({ success: false, message: 'No sheets found in the uploaded workbook.' });
+    }
+
+    const sheet = workbook.Sheets[sheetName];
+    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+    if (!rawRows || rawRows.length === 0) {
+      return res.status(400).json({ success: false, message: 'The uploaded sheet is empty.' });
+    }
+
+    // Load all students for fast matching
+    const allStudents = await Student.find(
+      {},
+      'academicDetails personalDetails'
+    ).lean();
+
+    const admMap = new Map();
+    const rollMap = new Map();
+    const nameMap = new Map();
+
+    for (const st of allStudents) {
+      const adm = (st.academicDetails?.admissionNumber || '').toString().trim().toLowerCase();
+      if (adm) admMap.set(adm, st);
+
+      const roll = (st.academicDetails?.rollNumber || '').toString().trim().toLowerCase();
+      const cls = (st.academicDetails?.class || '').toString().trim().toLowerCase();
+      if (roll && cls) rollMap.set(`${cls}_${roll}`, st);
+
+      const fName = (st.personalDetails?.firstName || '').toString().trim().toLowerCase();
+      const lName = (st.personalDetails?.lastName || '').toString().trim().toLowerCase();
+      const fullName = `${fName} ${lName}`.trim();
+      if (fullName) nameMap.set(fullName, st);
+    }
+
+    const successful = [];
+    const failed = [];
+    let rowIdx = 1;
+
+    for (const row of rawRows) {
+      rowIdx++;
+      
+      // Helper to find value from row with multiple possible header keys
+      const getValue = (patterns, defaultVal = '') => {
+        for (const key of Object.keys(row)) {
+          const cleanKey = key.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+          for (const pattern of patterns) {
+            if (cleanKey.includes(pattern)) {
+              return row[key];
+            }
+          }
+        }
+        return defaultVal;
+      };
+
+      const admNoVal = getValue(['admissionno', 'admno', 'scholarno', 'scholarno', 'regno', 'studentid', 'rollno']).toString().trim();
+      const nameVal = getValue(['studentname', 'name', 'fullname']).toString().trim();
+      const classVal = getValue(['class', 'grade', 'standard']).toString().trim();
+      const amountVal = Number(getValue(['amountpaid', 'paidamount', 'amount', 'feepaid', 'feespaid', 'fee', 'totalpaid'])) || 0;
+      const payModeRaw = getValue(['paymentmode', 'paymode', 'mode', 'paymenttype'], 'Cash').toString().trim();
+      const receiptNoRaw = getValue(['receiptno', 'recno', 'voucherno', 'billno']).toString().trim();
+      const dateRaw = getValue(['receiptdate', 'paymentdate', 'receivingdate', 'date', 'paydate']);
+      const refVal = getValue(['bankreference', 'referencenumber', 'refno', 'transactionid', 'chequeno', 'cheque', 'reference', 'utrno']).toString().trim();
+      const bankVal = getValue(['bankname', 'bank', 'depositbank']).toString().trim();
+      const remarksVal = getValue(['remarks', 'remark', 'narration', 'notes', 'comment'], 'Bulk Excel Upload').toString().trim();
+
+      // Validate Amount
+      if (amountVal <= 0) {
+        failed.push({
+          row: rowIdx,
+          admissionNo: admNoVal,
+          studentName: nameVal,
+          reason: 'Amount paid must be greater than 0.'
+        });
+        continue;
+      }
+
+      // Match Student
+      let student = null;
+      if (admNoVal) {
+        student = admMap.get(admNoVal.toLowerCase());
+      }
+      if (!student && classVal && admNoVal) {
+        student = rollMap.get(`${classVal.toLowerCase()}_${admNoVal.toLowerCase()}`);
+      }
+      if (!student && nameVal) {
+        student = nameMap.get(nameVal.toLowerCase());
+      }
+
+      if (!student) {
+        failed.push({
+          row: rowIdx,
+          admissionNo: admNoVal || 'N/A',
+          studentName: nameVal || 'N/A',
+          reason: `Student not found with Admission/Roll No "${admNoVal || nameVal}".`
+        });
+        continue;
+      }
+
+      // Normalize Payment Mode
+      let paymentMode = 'Cash';
+      const pUpper = payModeRaw.toUpperCase();
+      if (pUpper.includes('CHEQUE') || pUpper.includes('CHQ')) paymentMode = 'Cheque';
+      else if (pUpper.includes('ONLINE') || pUpper.includes('UPI') || pUpper.includes('GPAY') || pUpper.includes('PHONEPE') || pUpper.includes('PAYTM') || pUpper.includes('NEFT') || pUpper.includes('RTGS') || pUpper.includes('IMPS')) paymentMode = 'Online';
+      else if (pUpper.includes('DD') || pUpper.includes('DRAFT')) paymentMode = 'DD';
+      else if (pUpper.includes('CARD') || pUpper.includes('DEBIT') || pUpper.includes('CREDIT')) paymentMode = 'Card';
+      else if (pUpper.includes('ADJUST')) paymentMode = 'Adjustment';
+
+      // Parse Receipt Date
+      let receiptDate = new Date();
+      if (dateRaw) {
+        if (typeof dateRaw === 'number') {
+          // Excel serial date number conversion
+          receiptDate = new Date(Math.round((dateRaw - 25569) * 86400 * 1000));
+        } else {
+          const parsed = new Date(dateRaw);
+          if (!isNaN(parsed.getTime())) {
+            receiptDate = parsed;
+          }
+        }
+      }
+
+      // Generate or use Receipt Number
+      const receiptNo = receiptNoRaw || `REC${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+      try {
+        // Create FeeReceipt
+        const receipt = await FeeReceipt.create({
+          receiptNo,
+          student: student._id,
+          amountPaid: amountVal,
+          paymentMode,
+          receiptDate,
+          remarks: remarksVal,
+          referenceNumber: refVal,
+          bankName: bankVal,
+          status: 'Successful',
+          chequeStatus: paymentMode === 'Cheque' ? 'Pending' : 'Cleared'
+        });
+
+        // Update StudentFeeLedger
+        let ledger = await StudentFeeLedger.findOne({ student: student._id });
+        if (!ledger) {
+          ledger = new StudentFeeLedger({
+            student: student._id,
+            totalPayable: amountVal,
+            totalPaid: 0,
+            totalDues: amountVal,
+            advanceAmount: 0
+          });
+        }
+
+        ledger.totalPaid = (Number(ledger.totalPaid) || 0) + amountVal;
+
+        if (Number(ledger.totalDues) > 0) {
+          if (amountVal >= ledger.totalDues) {
+            ledger.advanceAmount = (Number(ledger.advanceAmount) || 0) + (amountVal - ledger.totalDues);
+            ledger.totalDues = 0;
+          } else {
+            ledger.totalDues -= amountVal;
+          }
+        } else {
+          ledger.advanceAmount = (Number(ledger.advanceAmount) || 0) + amountVal;
+        }
+
+        ledger.lastPaymentDate = receiptDate;
+        await ledger.save();
+
+        successful.push({
+          row: rowIdx,
+          receiptNo,
+          admissionNo: student.academicDetails?.admissionNumber || admNoVal,
+          studentName: `${student.personalDetails?.firstName || ''} ${student.personalDetails?.lastName || ''}`.trim(),
+          amountPaid: amountVal,
+          paymentMode,
+          date: receiptDate.toISOString().split('T')[0]
+        });
+      } catch (innerErr) {
+        failed.push({
+          row: rowIdx,
+          admissionNo: admNoVal,
+          studentName: nameVal,
+          reason: innerErr.message
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Excel processed: ${successful.length} records successfully uploaded, ${failed.length} failed.`,
+      stats: {
+        totalRows: rawRows.length,
+        successfulCount: successful.length,
+        failedCount: failed.length
+      },
+      successful,
+      failed
+    });
+  } catch (error) {
+    console.error('Error uploading bulk fees excel:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getStudentLedger,
   submitFeePayment,
@@ -481,5 +770,8 @@ module.exports = {
   adjustAdvance,
   updateChequeStatus,
   addManualFee,
-  updateBulkReceiptMetadata
+  updateBulkReceiptMetadata,
+  downloadSampleFeeExcel,
+  uploadBulkFeesExcel
 };
+
