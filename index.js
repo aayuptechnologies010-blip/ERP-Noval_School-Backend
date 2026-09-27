@@ -15,18 +15,14 @@ const app = express();
 // Middlewares
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:5175',
-  'http://localhost:5176',
-  'https://erp-noval-school.vercel.app', // Fixed old domain (origin should not contain paths like /login)
-  'https://erp-noval-school-1acey25x7-aayuptechnologies010-blips-projects.vercel.app' // Aapka Naya Vercel Domain
+  'https://erp-noval-school.vercel.app',
+  'https://erp-noval-school-1acey25x7-aayuptechnologies010-blips-projects.vercel.app'
 ].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    // Allow requests with no origin (like mobile apps, curl, postman) or any localhost port during development
+    if (!origin || /^http:\/\/localhost:\d+$/.test(origin) || /^http:\/\/127\.0\.0\.1:\d+$/.test(origin) || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
