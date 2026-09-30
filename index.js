@@ -141,6 +141,7 @@ app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/parishes', require('./routes/parishRoutes'));
 app.use('/api/religions', require('./routes/religionRoutes'));
 app.use('/api/school-classes', require('./routes/schoolClassRoutes'));
+app.use('/api/classes', require('./routes/schoolClassRoutes'));
 app.use('/api/school-global-details', require('./routes/schoolGlobalDetailsRoutes'));
 app.use('/api/school-boards', require('./routes/schoolBoardRoutes'));
 app.use('/api/school-global-fee-types', require('./routes/schoolGlobalFeeTypeRoutes'));
