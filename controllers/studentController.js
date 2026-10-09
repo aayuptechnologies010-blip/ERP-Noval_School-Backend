@@ -85,14 +85,30 @@ const createStudent = async (req, res) => {
 // @access  Private (Admin)
 const getAllStudents = async (req, res) => {
   try {
-    const { class: studentClass, section } = req.query;
+    const { class: studentClass, section, search } = req.query;
     let query = {};
     
-    if (studentClass) {
+    if (studentClass && studentClass !== 'All') {
       query['academicDetails.class'] = studentClass;
     }
-    if (section) {
+    if (section && section !== 'All') {
       query['academicDetails.section'] = section;
+    }
+    if (search && search.trim()) {
+      const searchRegex = new RegExp(search.trim(), 'i');
+      query.$or = [
+        { 'personalDetails.firstName': searchRegex },
+        { 'personalDetails.middleName': searchRegex },
+        { 'personalDetails.lastName': searchRegex },
+        { 'personalDetails.nameAsPerAadhar': searchRegex },
+        { 'academicDetails.admissionNumber': searchRegex },
+        { 'academicDetails.rollNumber': searchRegex },
+        { 'familyDetails.father.firstName': searchRegex },
+        { 'familyDetails.father.lastName': searchRegex },
+        { firstName: searchRegex },
+        { lastName: searchRegex },
+        { admissionNumber: searchRegex }
+      ];
     }
 
     const students = await Student.find(query).sort({ 'academicDetails.rollNumber': 1 });

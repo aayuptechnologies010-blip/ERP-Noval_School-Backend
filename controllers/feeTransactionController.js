@@ -162,7 +162,10 @@ const submitFeePayment = async (req, res) => {
 const getAllReceipts = async (req, res) => {
   try {
     const receipts = await FeeReceipt.find()
-      .populate('student', 'firstName lastName admissionNumber rollNumber class section')
+      .populate({
+        path: 'student',
+        select: 'personalDetails academicDetails contactAddress familyDetails firstName lastName admissionNumber rollNumber class section'
+      })
       .sort({ createdAt: -1 });
     res.status(200).json(receipts);
   } catch (error) {
