@@ -317,7 +317,25 @@ const deleteRouteRelation = async (req, res) => {
 // ========================
 const getFuelByVehicle = async (req, res) => {
   try {
-    const entries = await VehicleFuel.find({ vehicle: req.params.vehicleId }).populate('vehicle', 'vehicleNo').sort({ date: -1 });
+    const vehicleId = req.params.vehicleId || req.query.vehicleId;
+    const { startDate, endDate } = req.query;
+    let query = {};
+
+    if (vehicleId && vehicleId !== 'all' && vehicleId !== 'All') {
+      query.vehicle = vehicleId;
+    }
+
+    if (startDate || endDate) {
+      query.date = {};
+      if (startDate) query.date.$gte = new Date(startDate);
+      if (endDate) {
+        const eDate = new Date(endDate);
+        eDate.setHours(23, 59, 59, 999);
+        query.date.$lte = eDate;
+      }
+    }
+
+    const entries = await VehicleFuel.find(query).populate('vehicle', 'vehicleNo name').sort({ date: -1 });
     res.status(200).json(entries);
   } catch (error) { res.status(500).json({ message: error.message }); }
 };
@@ -341,7 +359,29 @@ const deleteFuelEntry = async (req, res) => {
 // ========================
 const getServiceByVehicle = async (req, res) => {
   try {
-    const entries = await VehicleService.find({ vehicle: req.params.vehicleId }).populate('vehicle', 'vehicleNo').sort({ serviceDate: -1 });
+    const vehicleId = req.params.vehicleId || req.query.vehicleId;
+    const { startDate, endDate, serviceType } = req.query;
+    let query = {};
+
+    if (vehicleId && vehicleId !== 'all' && vehicleId !== 'All') {
+      query.vehicle = vehicleId;
+    }
+
+    if (serviceType && serviceType !== 'All' && serviceType !== 'All Types') {
+      query.serviceType = new RegExp(serviceType, 'i');
+    }
+
+    if (startDate || endDate) {
+      query.serviceDate = {};
+      if (startDate) query.serviceDate.$gte = new Date(startDate);
+      if (endDate) {
+        const eDate = new Date(endDate);
+        eDate.setHours(23, 59, 59, 999);
+        query.serviceDate.$lte = eDate;
+      }
+    }
+
+    const entries = await VehicleService.find(query).populate('vehicle', 'vehicleNo name').sort({ serviceDate: -1 });
     res.status(200).json(entries);
   } catch (error) { res.status(500).json({ message: error.message }); }
 };
@@ -365,7 +405,25 @@ const deleteServiceEntry = async (req, res) => {
 // ========================
 const getMeterByVehicle = async (req, res) => {
   try {
-    const entries = await DailyMeter.find({ vehicle: req.params.vehicleId }).populate('vehicle', 'vehicleNo').sort({ date: -1 });
+    const vehicleId = req.params.vehicleId || req.query.vehicleId;
+    const { startDate, endDate } = req.query;
+    let query = {};
+
+    if (vehicleId && vehicleId !== 'all' && vehicleId !== 'All') {
+      query.vehicle = vehicleId;
+    }
+
+    if (startDate || endDate) {
+      query.date = {};
+      if (startDate) query.date.$gte = new Date(startDate);
+      if (endDate) {
+        const eDate = new Date(endDate);
+        eDate.setHours(23, 59, 59, 999);
+        query.date.$lte = eDate;
+      }
+    }
+
+    const entries = await DailyMeter.find(query).populate('vehicle', 'vehicleNo name').sort({ date: -1 });
     res.status(200).json(entries);
   } catch (error) { res.status(500).json({ message: error.message }); }
 };
@@ -665,6 +723,155 @@ const getOutPasses = async (req, res) => {
 
 
 
+// @desc    Bulk Upload / Import Transport Records from Excel
+// @route   POST /api/transport/bulk-upload
+// @access  Private (Admin)
+const bulkUploadTransportExcel = async (req, res) => {
+  try {
+    const { students } = req.body;
+    if (!students || !Array.isArray(students) || students.length === 0) {
+      return res.status(400).json({ message: 'No student data provided in the payload' });
+    }
+
+    const RouteStop = require('../models/routeStopModel');
+    const VehicleRoute = require('../models/vehicleRouteModel');
+    const Vehicle = require('../models/vehicleModel');
+
+    // Cache routes, stops, vehicles
+    const existingRoutes = await VehicleRoute.find({});
+    const routesMap = {};
+    existingRoutes.forEach(r => routesMap[r.routeName.trim().toUpperCase()] = r._id);
+
+    const existingStops = await RouteStop.find({});
+    const stopsMap = {};
+    existingStops.forEach(s => stopsMap[s.stopName.trim().toUpperCase()] = s);
+
+    const existingVehicles = await Vehicle.find({});
+    const vehiclesMap = {};
+    existingVehicles.forEach(v => vehiclesMap[(v.vehicleNo || '').trim().toUpperCase()] = v._id);
+
+    const bulkOps = [];
+    let processed = 0;
+
+    for (const row of students) {
+      const adm = String(row.admNo || row['ADM NO.'] || row['Admission No'] || row.admissionNumber || '').trim();
+      const stName = String(row.stop || row['STOP'] || row['Stop Name'] || '').trim();
+      if (!adm) continue;
+
+      let fare = Number(row.fare || row['FARE'] || row['Transport Fee'] || 0) || 0;
+      let rName = String(row.route || row['ROUTE'] || '').trim();
+      let vName = String(row.vehicle || row['BUS NO.'] || row['Vehicle'] || '').trim();
+
+      // Derive route & vehicle if missing
+      if (!rName) {
+        const m = stName.match(/^(\d+)-/);
+        rName = m ? `Route ${m[1]}` : (stName ? `Route - ${stName}` : 'Route 1');
+      }
+      if (!vName) {
+        const m = stName.match(/^(\d+)-/);
+        vName = m ? `Bus No. ${m[1]}` : 'Bus No. 1';
+      }
+
+      // Check or create route
+      let rId = routesMap[rName.toUpperCase()];
+      if (!rId && rName) {
+        const newR = await VehicleRoute.create({
+          routeName: rName,
+          startPoint: 'School Campus',
+          endPoint: stName || 'City',
+          remarks: 'Created via Excel Upload'
+        });
+        rId = newR._id;
+        routesMap[rName.toUpperCase()] = rId;
+      }
+
+      // Check or create vehicle
+      let vId = vehiclesMap[vName.toUpperCase()];
+      if (!vId && vName) {
+        const newV = await Vehicle.create({
+          vehicleNo: vName,
+          capacity: 40,
+          driverName: 'Assigned Driver',
+          driverMobile: '9999999999'
+        });
+        vId = newV._id;
+        vehiclesMap[vName.toUpperCase()] = vId;
+      }
+
+      // Check or create stop
+      let stopDoc = stopsMap[stName.toUpperCase()];
+      if (!stopDoc && stName) {
+        stopDoc = await RouteStop.create({
+          stopName: stName,
+          route: rId,
+          stopOrder: 1,
+          fee: fare
+        });
+        stopsMap[stName.toUpperCase()] = stopDoc;
+      }
+
+      let parsedDate = new Date();
+      const rawDate = row.assignDate || row['ASSIGN DATE'] || row['Assign Date'];
+      if (rawDate) {
+        const d = Date.parse(rawDate);
+        if (!isNaN(d)) parsedDate = new Date(d);
+      }
+
+      const updateFields = {
+        transportAssigned: true,
+        transportFee: fare,
+        transportRoute: rName,
+        transportStop: stName,
+        vehicleNo: vName,
+        'transportDetails.isTransportStudent': true,
+        'transportDetails.isSelfTransport': false,
+        'transportDetails.route': rId,
+        'transportDetails.stop': stopDoc ? stopDoc._id : null,
+        'transportDetails.vehicle': vId,
+        'transportDetails.transportFee': fare,
+        'transportDetails.assignedDate': parsedDate,
+        'transportDetails.agencyName': row.agency || row['AGENCY NAME'] || ''
+      };
+
+      if (row.address || row['ADDRESS']) {
+        updateFields['contactAddress.currentAddress'] = row.address || row['ADDRESS'];
+      }
+      if (row.contact || row['CONTACT']) {
+        updateFields['contactAddress.contactNumber'] = String(row.contact || row['CONTACT']);
+      }
+
+      bulkOps.push({
+        updateOne: {
+          filter: {
+            $or: [
+              { 'academicDetails.admissionNumber': adm },
+              { 'academicDetails.admissionNo': adm },
+              { admissionNumber: adm }
+            ]
+          },
+          update: { $set: updateFields }
+        }
+      });
+      processed++;
+    }
+
+    if (bulkOps.length === 0) {
+      return res.status(400).json({ message: 'No valid admission numbers found in uploaded data' });
+    }
+
+    const result = await Student.bulkWrite(bulkOps, { ordered: false });
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully processed ${processed} records! Matched: ${result.matchedCount}, Updated: ${result.modifiedCount}`,
+      matchedCount: result.matchedCount,
+      modifiedCount: result.modifiedCount
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAllAgencies, createAgency, updateAgency, deleteAgency,
   getAllGroups, createGroup, updateGroup, deleteGroup,
@@ -684,5 +891,7 @@ module.exports = {
   getAttendance,
   getTransportStudents,
   createOutPass,
-  getOutPasses
+  getOutPasses,
+  bulkUploadTransportExcel
 };
+

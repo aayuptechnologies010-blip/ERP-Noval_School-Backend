@@ -16,10 +16,11 @@ const {
   getMeterByVehicle, createMeterEntry, deleteMeterEntry,
   getAllReminders, createReminder, updateReminder, deleteReminder,
   assignTransportToStudent, assignSelfTransportBulk, transferStudentsRoute, removeTransportFromStudent, getStudentsByRoute,
-  markAttendance, getAttendance, getTransportStudents, createOutPass, getOutPasses
+  markAttendance, getAttendance, getTransportStudents, createOutPass, getOutPasses, bulkUploadTransportExcel
 } = require('../controllers/transportController');
 
 // Travel Agency
+
 router.get('/agencies', protect, getAllAgencies);
 router.post('/agencies', protect, createAgency);
 router.put('/agencies/:id', protect, updateAgency);
@@ -74,16 +75,19 @@ router.put('/route-relations/:id', protect, updateRouteRelation);
 router.delete('/route-relations/:id', protect, deleteRouteRelation);
 
 // Fuel Entries
+router.get('/fuel-entries', protect, getFuelByVehicle);
 router.get('/fuel/:vehicleId', protect, getFuelByVehicle);
 router.post('/fuel', protect, createFuelEntry);
 router.delete('/fuel/:id', protect, deleteFuelEntry);
 
 // Service Entries
+router.get('/service-entries', protect, getServiceByVehicle);
 router.get('/service/:vehicleId', protect, getServiceByVehicle);
 router.post('/service', protect, createServiceEntry);
 router.delete('/service/:id', protect, deleteServiceEntry);
 
 // Daily Meter
+router.get('/meter-entries', protect, getMeterByVehicle);
 router.get('/meter/:vehicleId', protect, getMeterByVehicle);
 router.post('/meter', protect, createMeterEntry);
 router.delete('/meter/:id', protect, deleteMeterEntry);
@@ -100,6 +104,8 @@ router.post('/assign-self-bulk', protect, assignSelfTransportBulk);
 router.post('/transfer-route', protect, transferStudentsRoute);
 router.delete('/assign-student/:studentId', protect, removeTransportFromStudent);
 router.get('/students-by-route/:routeId', protect, getStudentsByRoute);
+router.post('/bulk-upload', protect, bulkUploadTransportExcel);
+
 
 
 

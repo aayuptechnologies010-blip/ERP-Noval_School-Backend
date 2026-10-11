@@ -24,6 +24,7 @@ router.route('/templates/:id')
   .delete(deleteTemplate);
 
 // SMS Logs / Send Routes
+router.get('/logs', getAllSms);
 router.route('/')
   .post(sendSms)
   .get(getAllSms);
