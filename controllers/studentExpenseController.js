@@ -1,6 +1,40 @@
 const StudentExpense = require('../models/studentExpenseModel');
 const Student = require('../models/studentModel');
 
+// @desc    Get all student expenses with optional filters
+// @route   GET /api/student-expenses
+// @access  Private
+const getAllStudentExpenses = async (req, res) => {
+  try {
+    const { classId, startDate, endDate } = req.query;
+    let query = {};
+
+    if (startDate && endDate) {
+      query.date = {
+        $gte: new Date(startDate),
+        $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999))
+      };
+    } else if (startDate) {
+      query.date = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      query.date = { $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999)) };
+    }
+
+    let expenses = await StudentExpense.find(query)
+      .populate('student')
+      .sort('-date')
+      .lean();
+
+    if (classId) {
+      expenses = expenses.filter(e => e.student?.academicDetails?.class === classId);
+    }
+
+    res.status(200).json(expenses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Log a student expense
 // @route   POST /api/student-expenses
 // @access  Private
@@ -44,6 +78,7 @@ const getStudentExpenses = async (req, res) => {
 };
 
 module.exports = {
+  getAllStudentExpenses,
   logExpense,
   getStudentExpenses
 };

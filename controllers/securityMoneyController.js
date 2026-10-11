@@ -1,6 +1,32 @@
 const SecurityMoney = require('../models/securityMoneyModel');
 const Student = require('../models/studentModel');
 
+// @desc    Get All Security Money Records (with optional filters)
+// @route   GET /api/security-money
+// @access  Private
+const getAllSecurityMoney = async (req, res) => {
+  try {
+    const { classId, status } = req.query;
+    let query = {};
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    let records = await SecurityMoney.find(query)
+      .populate('student')
+      .sort('-depositDate')
+      .lean();
+
+    if (classId) {
+      records = records.filter(r => r.student?.academicDetails?.class === classId);
+    }
+
+    res.status(200).json(records);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Deposit Security Money
 // @route   POST /api/security-money/deposit
 // @access  Private
@@ -75,6 +101,7 @@ const getSecurityMoneyByStudent = async (req, res) => {
 };
 
 module.exports = {
+  getAllSecurityMoney,
   depositSecurityMoney,
   returnSecurityMoney,
   getSecurityMoneyByStudent

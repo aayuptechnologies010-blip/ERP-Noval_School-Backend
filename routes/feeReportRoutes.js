@@ -4,7 +4,11 @@ const {
   getDailyFeeCollection,
   getMonthWiseCollection,
   getTotalCollection,
-  getDefaulterList
+  getDefaulterList,
+  getAdvancePayments,
+  getChequeReports,
+  getConcessionReports,
+  getCancelledReceipts
 } = require('../controllers/feeReportController');
 
 const {
@@ -23,6 +27,10 @@ router.get('/collection/daily', protect, getDailyFeeCollection);
 router.get('/collection/monthly', protect, getMonthWiseCollection);
 router.get('/collection/total', protect, getTotalCollection);
 router.get('/defaulters', protect, getDefaulterList);
+router.get('/advance-payments', protect, getAdvancePayments);
+router.get('/cheque-reports', protect, getChequeReports);
+router.get('/concessions', protect, getConcessionReports);
+router.get('/cancelled', protect, getCancelledReceipts);
 
 // Dashboard routes
 router.get('/dashboard/collection-summary', protect, getCollectionSummary);
